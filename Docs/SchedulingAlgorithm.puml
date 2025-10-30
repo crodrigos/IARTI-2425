@@ -1,0 +1,15 @@
+@startuml Initial Scheduling Algorithm
+
+start
+
+- Definir Valor Máximo (999999)
+
+- Definir calcular todas as permutações\n de 
+
+repeat
+    
+repeat while (for all possible permutations)
+
+end
+
+@enduml

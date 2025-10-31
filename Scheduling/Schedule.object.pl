@@ -27,19 +27,24 @@ createEmptySchedule(NCranes,[[NCranes,[]]|Rest]):-
 
 
 
-writeSchedule(AllCraneSchedule, Delay):-
-    bw(['Delay: ', Delay, '\n']),    
-    writeSchedule1(AllCraneSchedule),
-    bw('\n\n'),!.
+writeSchedule(AllCraneSchedule, Delay, Time) :- !,
+    bw(['Delay: ', Delay, '\n']),
+    bw(['Time: ', Time, '\n']),
+    writeSchedule1(1, AllCraneSchedule),
+    bw('\n\n'), !.
 
-writeSchedule1([]):-!.
-writeSchedule1([CraneSchedule|Schedule]):-   
-    write(CraneSchedule), 
+writeSchedule1(_, []) :- !.
+writeSchedule1(NCrane, [[]| RestSchedules]) :-
+    bw(['Crane ', NCrane, ': EMPTY \n']),
+    N1Crane is NCrane + 1,
+    writeSchedule1(N1Crane, RestSchedules).
+writeSchedule1(NCrane, [CraneSchedule | RestSchedules]) :-
+    bw(['Crane ', NCrane, ':\n']),
     writeCraneSchedule(CraneSchedule),
-    writeSchedule1(Schedule).
+    N1Crane is NCrane + 1,
+    writeSchedule1(N1Crane, RestSchedules).
 
-writeCraneSchedule([]):-!.
-writeCraneSchedule([[Vessel, StUnloading, EnLoading]|RestSchedule]):-
-    bw(['Vessel: ']),
-    bw([Vessel, '  ', StUnloading, ' - ', EnLoading]),
+writeCraneSchedule([]) :- !.
+writeCraneSchedule([(Vessel, StUnloading, EnLoading) | RestSchedule]) :-
+    bw(['\tVessel: ', Vessel, '  ', StUnloading, ' - ', EnLoading, '\n']),
     writeCraneSchedule(RestSchedule).

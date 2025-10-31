@@ -1,13 +1,23 @@
-bw([Next]):-
-    write(Next),!.
-bw([Next|Body]):-
-    write(Next),
-    bw(Body).
+% Base case for list: do nothing, succeed once.
+bw([]) :- !, true.
 
-bw(Message):- 
+% Recursive case for list: write each element.
+bw([Next|Body]) :- 
+    !,
+    write(Next),
+    bw(Body),
+    !, true.
+
+% Generic single argument: write and newline.
+bw(Message) :- 
+    !,
     write(Message),
-    write('\n'), !.
-bw(Prefix, Message):- 
-    write(Prefix), 
-    write(Message), 
-    write('\n'),!.
+    nl,
+    true.
+
+% Two-argument version: prefix + message.
+bw(Prefix, Message) :- 
+    !,
+    write(Prefix),
+    writeln(Message),
+    true.

@@ -1,4 +1,3 @@
-
 :-['Schedule.object.pl'].
 :-['ListUtils.pl'].
 :-['vessels.pl']. % Example Vessels
@@ -8,7 +7,7 @@
 
 :- autoload(library(lists), [append/3, member/2, last/2]).
 
-max_cranes(10).
+max_docks(10).
 
 % Current Shortest Schedule and Interval
 % shortest_delay(Sequence, Delay)
@@ -26,7 +25,7 @@ setShortestTime(NewTime):-
     retract(shortest_time(_)),
     asserta(shortest_time(NewTime)).
 
-% Interval Size to be analized
+% Interval Size to be analyzed
 % Default Value 167, 24*7 (a week)
 :-dynamic max_time/1.
 max_time(167).
@@ -43,42 +42,43 @@ setCalculationTime(TimeTaken, NCalculations):-
 
 %
 % [
-%     [vessel1, vessel2], % Grua1
-%     [vessel3], % Grua2
-%     [vessel4], % Grua3
+%     [vessel1, vessel2], % Dock1
+%     [vessel3], % Dock2
+%     [vessel4], % Dock3
 % ]
-createOrderedVesselMatrix(Vessels, NCranes, VesselMatrix):-
-    createdOrderedVesselMatrix1(Vessels, NCranes, 1, VesselMatrix).
+createOrderedVesselMatrix(Vessels, NDocks, VesselMatrix):-
+    createdOrderedVesselMatrix1(Vessels, NDocks, 1, VesselMatrix).
 
 % FIXME: VERIFICAR SE EXISTEM DUPLICADOS NO findall
-createdOrderedVesselMatrix1(Vessels, Ncranes, Ncranes, [Vessels]).
-createdOrderedVesselMatrix1(Vessels, NCranes, Depth, [Head|Rest]) :-
+createdOrderedVesselMatrix1(Vessels, NDocks, NDocks, [Vessels]).
+createdOrderedVesselMatrix1(Vessels, NDocks, Depth, [Head|Rest]) :-
     length(Vessels, NVessels),
-    NCranes > NVessels,
-    Depth < NCranes,
+    NDocks > NVessels,
+    Depth < NDocks,
 
     append(Head, Tail, Vessels),
     Depth1 is Depth + 1,
-    createdOrderedVesselMatrix1(Tail, NCranes, Depth1, Rest).
+    createdOrderedVesselMatrix1(Tail, NDocks, Depth1, Rest).
 
-createdOrderedVesselMatrix1(Vessels, NCranes, Depth, [Head|Rest]) :-
-    Depth < NCranes,
+createdOrderedVesselMatrix1(Vessels, NDocks, Depth, [Head|Rest]) :-
+    Depth < NDocks,
     append(Head, Tail, Vessels),
     Head \= [],
     Tail \= [],
+    
     Depth1 is Depth + 1,
-    createdOrderedVesselMatrix1(Tail, NCranes, Depth1, Rest).
+    createdOrderedVesselMatrix1(Tail, NDocks, Depth1, Rest).
 
-createMultipleCraneSchedule([],[]).
-createMultipleCraneSchedule([OrderedVesselCrane| VesselMatrix], [ScheduleOfCrane| Schedule]):-
-    createMultipleCraneSchedule(VesselMatrix, Schedule),
-    sequence_temporization(OrderedVesselCrane, ScheduleOfCrane).
+createMultipleDockSchedule([], []).
+createMultipleDockSchedule([OrderedVesselDock|VesselMatrix], [ScheduleOfDock|Schedule]):-
+    createMultipleDockSchedule(VesselMatrix, Schedule),
+    sequence_temporization(OrderedVesselDock, ScheduleOfDock).
 
 
-checkMultipleCraneScheduleDelay([], 0).
-checkMultipleCraneScheduleDelay([CraneSchedule|RestCraneSchedule], NewDelay):-
-    checkMultipleCraneScheduleDelay(RestCraneSchedule, CurrentDelay),
-    sum_delays(CraneSchedule, Delay),
+checkMultipleDockScheduleDelay([], 0).
+checkMultipleDockScheduleDelay([DockSchedule|RestDockSchedule], NewDelay):-
+    checkMultipleDockScheduleDelay(RestDockSchedule, CurrentDelay),
+    sum_delays(DockSchedule, Delay),
     NewDelay is Delay + CurrentDelay.
 
 % STARTING POINT OF PROGRAM
@@ -92,19 +92,18 @@ obtainShortestSequence(ShortestSchedule, ShortestDelay, ShortestTime):-
     shortest_time(ShortestTime).
 
 obtainShortestSequence1:-
-    max_cranes(MaxCranes), % Get Max Cranes
-    range(MaxCranes, RL),!, % Gen List of [1,2,...,MaxCranes]
+    max_docks(MaxDocks), % Get Max Docks
+    range(MaxDocks, RL),!, % Gen List of [1,2,...,MaxDocks]
 
-    member(NCranes, RL), % Get Value from RL
-    bw(["\nCalculating for ", NCranes, " Crane(s)\n\n"]),
+    member(NDocks, RL), % Get Value from RL
+    bw(["\nCalculating for ", NDocks, " Dock(s)\n\n"]),
 
     reset_timer, % Statistics
     start_timer, % Statistics
 
     reset_count,
     start_count,
-    (obtainShortestSequenceForNCranes(NCranes);true),
-
+    (obtainShortestSequenceForNDocks(NDocks);true),
 
     get_elapsed_time(T), % Statistics
     bw("Time Taken (ms): ", T), % Statistics
@@ -114,35 +113,34 @@ obtainShortestSequence1:-
     shortest_delay(Schedule,_),
     \+ checkScheduleExtendsMaxTime(Schedule).
 
-% obtainShortestSequence(+NCranes)
-% Testar todas os possives Horarios para um Num Especifico de GRUAS.
+% obtainShortestSequence(+NDocks)
+% Testar todas os possiveis Horarios para um Num Especifico de DOCAS.
 % O Valor é colocado em shortest_delay(-Schedule, Delay)
-obtainShortestSequenceForNCranes(NCranes):-
+obtainShortestSequenceForNDocks(NDocks):-
     allVessels(AllVessels),
-    createOrderedVesselMatrix(AllVessels,NCranes,VesselMat), % Backtracking here
-    createMultipleCraneSchedule(VesselMat,AllCraneSchedule),
-    checkMultipleCraneScheduleDelay(AllCraneSchedule, Delay),
-    compareShortestScheduleDelay(AllCraneSchedule, Delay),
-    increment_count,
+    createOrderedVesselMatrix(AllVessels, NDocks, VesselMat), % Backtracking here
+    createMultipleDockSchedule(VesselMat, AllDockSchedule),
+    checkMultipleDockScheduleDelay(AllDockSchedule, Delay),
+    compareShortestScheduleDelay(AllDockSchedule, Delay),
+    
     fail.
 
-compareShortestScheduleDelay(AllCraneSchedule, Delay):-
-    shortest_delay(_,LowestDelay),
-    ((Delay=<LowestDelay,!,setShortestDelay(AllCraneSchedule, Delay));true).
+compareShortestScheduleDelay(AllDockSchedule, Delay):-
+    shortest_delay(_, LowestDelay),
+    ((Delay =< LowestDelay, !, setShortestDelay(AllDockSchedule, Delay)); true).
 
 
 checkScheduleExtendsMaxTime(Schedule):-
     max_time(MaxTimeAllowed),
-    checkScheduleExtendsMaxTime1(Schedule,MaxScheduleTime),
-    setShortestTime(MaxScheduleTime),
-    ((MaxScheduleTime>MaxTimeAllowed,fail)).
-
-checkScheduleExtendsMaxTime1([],0).
-checkScheduleExtendsMaxTime1([CraneSchedule|Schedule], NewMaxScheduleTime):-
     checkScheduleExtendsMaxTime1(Schedule, MaxScheduleTime),
-    last(CraneSchedule, (Vessel,TSUnloading, TimeEndLoading)),
+    setShortestTime(MaxScheduleTime),
+    ((MaxScheduleTime > MaxTimeAllowed, fail)).
+
+checkScheduleExtendsMaxTime1([], 0).
+checkScheduleExtendsMaxTime1([DockSchedule|Schedule], NewMaxScheduleTime):-
+    checkScheduleExtendsMaxTime1(Schedule, MaxScheduleTime),
+    last(DockSchedule, (Vessel, _, TimeEndLoading)),
     (
-        (TimeEndLoading>MaxScheduleTime,!,NewMaxScheduleTime is TimeEndLoading)
+        (TimeEndLoading > MaxScheduleTime, !, NewMaxScheduleTime is TimeEndLoading)
         ; NewMaxScheduleTime is MaxScheduleTime
     ).
-

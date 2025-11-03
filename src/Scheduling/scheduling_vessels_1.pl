@@ -5,6 +5,9 @@
 
 :-dynamic shortest_delay/2.
 
+allVessels(N, Vessels):-
+    allVessels(VL),
+    findall(E, (nth1(I,VL,E), I =< N), Vessels).
 
 allVessels(Vessels):- 
 	findall(X, vessel(X,_,_,_,_), Vessels).

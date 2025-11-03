@@ -1,4 +1,11 @@
 
+:- module(map, [
+    mapset/2,
+    mapget/2,
+    mapremove/1,
+    mapclean/0
+]).
+
 :- dynamic keyvalue/2.
 mapset(Key, Value):-
     retractall(keyvalue(Key,_)),

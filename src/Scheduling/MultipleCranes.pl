@@ -1,4 +1,10 @@
+:- module(cranes, [
+    testForDifNumVessels/0,
+    obtainShortestSequence/2
+]).
+
 :- use_module("../Utils/Timer.object").
+:- use_module("../Utils/Map.object").
 :-['../Utils/ListUtils.pl'].
 :-['../Utils/BulkWrite.pl'].
 
@@ -8,7 +14,11 @@
 
 
 
-% ---- PREDICADOS DINAMICOS
+
+
+%:- module(cranes, [testForDifNumVessels/0]).
+
+% ---- PREDICADOS DINAMICOS ----
 
 % Current Shortest Schedule and Interval
 % shortest_delay(Sequence, Delay)
@@ -19,9 +29,18 @@ setShortestDelay(NewSchedule, NewDelay):-
     retract(shortest_delay(_,_)),
     asserta(shortest_delay(NewSchedule, NewDelay)).
 
+% Current Longest Schedule and Interval
+% longest_delay(Sequence, Delay)
+:- dynamic longest_delay/2.
+longest_delay(_, 0).
+setLongestDelay(NewSchedule, NewDelay):-
+    %bw("Delay: ", NewDelay),
+    retract(longest_delay(_,_)),
+    asserta(longest_delay(NewSchedule, NewDelay)).
+
 % Current Shortest Time for Schedule
 :- dynamic shortest_time/1.
-shortest_time(0).
+shortest_time(-1).
 setShortestTime(NewTime):-
     retract(shortest_time(_)),
     asserta(shortest_time(NewTime)).
@@ -49,78 +68,100 @@ setMaxCranes(NewValue):-
     retract(max_cranes(_)),
     asserta(max_cranes(NewValue)).
 
-
 testForDifNumVessels:-
-    allVessels(VL_temp),length(VL_temp, NumberOfVessels),
-
+    allVessels(VL_temp), length(VL_temp, NumberOfVessels),
     range(NumberOfVessels, NVL),
     
     ProgramTimerID is 0001,
-    reset_timer(ProgramTimerID),start_timer(ProgramTimerID),
-    max_cranes(NCranes),!,
+    reset_timer(ProgramTimerID), start_timer(ProgramTimerID),
+    max_cranes(NCranes), !,
 
     ((
         member(NVessels, NVL),
-
         allVessels(NVessels, ListOfVessels),
         bw("\n\n", "----------------------"),
         bw("Number of Vessels: ", NVessels),
 
         CraneTimerID = "craneId", reset_timer(CraneTimerID), start_timer(CraneTimerID),
 
-        obtainShortestSequence(ListOfVessels,NCranes,S,D),
+        obtainShortestSequence(ListOfVessels, NCranes),
 
         get_elapsed_time(CraneTimerID, Time),
         bw("\nCalculation for N Vessels (ms): ", Time),
 
         fail
-    );true),bw("\n\n").
-    % get_elapsed_time(TimerID, Time),
-    % bw("\n\n Total Runtime Duration (ms): ", Time).
+    ); true), bw("\n\n").
 
-obtainShortestSequence(ListOfVessels,NCranesAvailable, ShortestSchedule, ShortestDelay):-
+
+obtainShortestSequence(ListOfVessels, NCranesAvailable):-
+
+    mapremove(medium),
+    mapset(medium, (0, 0, 0)),
+
     ((
-        setShortestDelay(_,9999999),
-        range(NCranesAvailable, CL),!,
+        setShortestDelay(_, 9999999),
+        setLongestDelay(_, 0),
+        range(NCranesAvailable, CL), !,
 
         member(NCranes, CL),
-        bw(["\n\nTesting for ", NCranes,  " crane(s)\n"]),
+        bw(["\n\nTesting for ", NCranes, " crane(s)\n"]),
 
         reset_timer, start_timer,
-        (obtainShortestSequence1(ListOfVessels,NCranes);true),
+        (obtainShortestSequence1(ListOfVessels, NCranes); true),
         
-        shortest_delay(Seq,Delay), get_elapsed_time(CalculationTime),
-        bw("Shortest Delay: ", Delay),
-        bw("Shortest Sequence: ", Seq),
-        bw("Calculation Time (ms): ", CalculationTime),
-        
-        Delay=<0,!
-    );true),
-    shortest_delay(ShortestSchedule, ShortestDelay).
+        shortest_delay(SSeq, SDelay), 
+        longest_delay(LSeq, LDelay),
+        mapget(medium, (_, _, MDelay)),
 
-obtainShortestSequence1(ListOfVessels,NCranes):-
+        bw("Shortest Sequence: ", SSeq),
+        bw(" Longest Sequence: ", LSeq),
+
+        bw("   Shortest Delay: ", SDelay),
+        bw("    Longest Delay: ", LDelay),
+        bw("     Medium Delay: ", MDelay),
+
+        get_elapsed_time(CalculationTime),
+        bw("Calculation Time (ms): ", CalculationTime),
+
+        SDelay =< 0, !
+    ); true).
+
+obtainShortestSequence1(ListOfVessels, NCranes):-
     permutation(ListOfVessels, NewOrderedVesselList),
-    sequenceTemporization(NewOrderedVesselList, NCranes, TripletSequence), % 
+    sequenceTemporization(NewOrderedVesselList, NCranes, TripletSequence),
     sum_delays(TripletSequence, Delay),
     compare_shortest_delay(TripletSequence, Delay),
+    compare_longest_delay(TripletSequence, Delay),
+    compare_median_delay(Delay),
     fail.
 
-sequenceTemporization(OrderedVesselList, NCranes, TripletSequence):-
-    sequenceTemporization1(0,NCranes, OrderedVesselList, TripletSequence).
 
-sequenceTemporization1(_,_,[],[]):-!.
+compare_longest_delay(TripletSequence, Delay):-
+    longest_delay(_, LongestDelay),
+    ((
+        Delay > LongestDelay, !, setLongestDelay(TripletSequence, Delay)
+    ); true).
+
+compare_median_delay(Delay):-
+    mapget(medium, (Sum, N, Medium)), % FIXME: Maybe change from mapset
+    N1 is N+1,
+    Sum1 is Sum+Delay,
+    Medium1 is Sum1/N1,
+    mapset(medium, (Sum1, N1, Medium1)).
+
+
+sequenceTemporization(OrderedVesselList, NCranes, TripletSequence):-
+    sequenceTemporization1(0, NCranes, OrderedVesselList, TripletSequence).
+
+sequenceTemporization1(_, _, [], []):- !.
 sequenceTemporization1(
     EndPrevSeq, 
     NCranes,
-    [Vessel| LV], 
+    [Vessel|LV], 
     [(Vessel, TStartUnloading, TEndLoading)|Seq]
 ):-
     vessel(Vessel, TArrival, _, DUnloading, DLoading),
-
-    ((TArrival>EndPrevSeq,!,TStartUnloading is TArrival);TStartUnloading is EndPrevSeq+1),
-    
+    ((TArrival > EndPrevSeq, !, TStartUnloading is TArrival); TStartUnloading is EndPrevSeq + 1),
     OperationDuration is (DUnloading + DLoading)//NCranes + 1,
- 
     TEndLoading is TStartUnloading + OperationDuration,
-
-    sequenceTemporization1(TEndLoading,NCranes,LV,Seq).
+    sequenceTemporization1(TEndLoading, NCranes, LV, Seq).

@@ -1,15 +1,15 @@
-:- module(cranes, [
+:- module(craneScheduling, [
     testForDifNumVessels/0,
     obtainShortestSequence/2
 ]).
 
-:- use_module("../Utils/Timer.object").
-:- use_module("../Utils/Map.object").
-:-['../Utils/ListUtils.pl'].
-:-['../Utils/BulkWrite.pl'].
+:- use_module('../Utils/Timer.object').
+:- use_module('../Utils/Map.object').
+:- use_module('../Utils/ListUtils.pl').
+:- use_module('../Utils/BetterWrite.pl').
+:- use_module('vessels.pl').
 
 :-['Schedule.object.pl'].
-:-['vessels.pl']. % Example Vessels
 :-['scheduling_vessels_1.pl']. % Given Code
 
 
@@ -112,6 +112,7 @@ obtainShortestSequence(ListOfVessels, NCranesAvailable):-
         shortest_delay(SSeq, SDelay), 
         longest_delay(LSeq, LDelay),
         mapget(medium, (_, _, MDelay)),
+        get_elapsed_time(CalculationTime),
 
         bw("Shortest Sequence: ", SSeq),
         bw(" Longest Sequence: ", LSeq),
@@ -120,7 +121,7 @@ obtainShortestSequence(ListOfVessels, NCranesAvailable):-
         bw("    Longest Delay: ", LDelay),
         bw("     Medium Delay: ", MDelay),
 
-        get_elapsed_time(CalculationTime),
+        
         bw("Calculation Time (ms): ", CalculationTime),
 
         SDelay =< 0, !

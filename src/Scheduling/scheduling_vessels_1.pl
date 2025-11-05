@@ -5,13 +5,6 @@
 
 :-dynamic shortest_delay/2.
 
-allVessels(N, Vessels):-
-    allVessels(VL),
-    findall(E, (nth1(I,VL,E), I =< N), Vessels).
-
-allVessels(Vessels):- 
-	findall(X, vessel(X,_,_,_,_), Vessels).
-
 sequence_temporization(LV,SeqTriplets):-
     sequence_temporization1(0,LV,SeqTriplets).
 

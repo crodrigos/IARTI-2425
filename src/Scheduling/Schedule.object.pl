@@ -1,5 +1,5 @@
 
-:-['../Utils/BulkWrite.pl'].
+:-use_module('../Utils/BetterWrite').
 
 % Schedule - 
 % [

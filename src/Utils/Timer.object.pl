@@ -12,11 +12,10 @@
     reset_timer/0
 ]).
 
-:- ['Map.object.pl'].
-
-% Optional; SWI already has statistics/2 built-in
-% but it doesn’t hurt
+:- use_module('Map.object').
 :- use_module(library(statistics)).
+
+timermapid("TIMER_MODULE_DEFAULT_ID").
 
 start_timer(ID):-start_timer(ID,_).
 start_timer(ID, Start):-
@@ -31,11 +30,16 @@ get_elapsed_time(ID, TimeTaken):-
 reset_timer(ID):- 
     mapset(ID, 0).
 
+% Non ID associated predicates
+
 start_timer:- 
-    start_timer("DEFAULT_TIMER", _).
+    timermapid(TimerID),
+    start_timer(TimerID, _).
 
 get_elapsed_time(TimeTaken):- 
-    get_elapsed_time("DEFAULT_TIMER", TimeTaken).
+    timermapid(TimerID),
+    get_elapsed_time(TimerID, TimeTaken).
 
 reset_timer:- 
-    reset_timer("DEFAULT_TIMER").
+    timermapid(TimerID),
+    reset_timer(TimerID).

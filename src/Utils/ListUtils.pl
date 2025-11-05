@@ -1,4 +1,9 @@
 
+:-module(listutils, [
+    range/2,
+    createUniqueSublist/3
+]).
+
 range(N,Out):-
     range1(N,Out1),
     reverse(Out1, Out).

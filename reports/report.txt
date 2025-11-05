@@ -5,8 +5,11 @@ Number of Vessels: 1
 
 
 Testing for 1 crane(s)
-Shortest Delay: 0
 Shortest Sequence: [(zeus,6,33)]
+ Longest Sequence: _19102
+   Shortest Delay: 0
+    Longest Delay: 0
+     Medium Delay: 0
 Calculation Time (ms): 0
 
 Calculation for N Vessels (ms): 0
@@ -17,9 +20,12 @@ Number of Vessels: 2
 
 
 Testing for 1 crane(s)
-Shortest Delay: 0
 Shortest Sequence: [(poseidon,10,33),(zeus,34,61)]
-Calculation Time (ms): 0
+ Longest Sequence: [(zeus,6,33),(poseidon,34,57)]
+   Shortest Delay: 0
+    Longest Delay: 3
+     Medium Delay: 1.5
+Calculation Time (ms): 1
 
 Calculation for N Vessels (ms): 1
 
@@ -29,14 +35,20 @@ Number of Vessels: 3
 
 
 Testing for 1 crane(s)
-Shortest Delay: 22
 Shortest Sequence: [(marenostrum,8,31),(poseidon,32,55),(zeus,56,83)]
+ Longest Sequence: [(poseidon,10,33),(zeus,34,61),(marenostrum,62,85)]
+   Shortest Delay: 22
+    Longest Delay: 36
+     Medium Delay: 31.333333333333332
 Calculation Time (ms): 0
 
 
 Testing for 2 crane(s)
-Shortest Delay: 0
 Shortest Sequence: [(zeus,6,20),(poseidon,21,33),(marenostrum,34,46)]
+ Longest Sequence: [(poseidon,10,33),(zeus,34,61),(marenostrum,62,85)]
+   Shortest Delay: 0
+    Longest Delay: 36
+     Medium Delay: 15.75
 Calculation Time (ms): 0
 
 Calculation for N Vessels (ms): 0
@@ -47,15 +59,21 @@ Number of Vessels: 4
 
 
 Testing for 1 crane(s)
-Shortest Delay: 67
 Shortest Sequence: [(nautilus,9,28),(marenostrum,29,52),(poseidon,53,76),(zeus,77,104)]
-Calculation Time (ms): 0
+ Longest Sequence: [(poseidon,10,33),(zeus,34,61),(marenostrum,62,85),(nautilus,86,105)]
+   Shortest Delay: 67
+    Longest Delay: 97
+     Medium Delay: 82
+Calculation Time (ms): 1
 
 
 Testing for 2 crane(s)
-Shortest Delay: 0
 Shortest Sequence: [(poseidon,10,22),(nautilus,23,33),(marenostrum,34,46),(zeus,47,61)]
-Calculation Time (ms): 1
+ Longest Sequence: [(poseidon,10,33),(zeus,34,61),(marenostrum,62,85),(nautilus,86,105)]
+   Shortest Delay: 0
+    Longest Delay: 97
+     Medium Delay: 44.9375
+Calculation Time (ms): 0
 
 Calculation for N Vessels (ms): 1
 
@@ -65,23 +83,32 @@ Number of Vessels: 5
 
 
 Testing for 1 crane(s)
-Shortest Delay: 123
 Shortest Sequence: [(nautilus,9,28),(marenostrum,29,52),(floating,53,73),(poseidon,74,97),(zeus,98,125)]
-Calculation Time (ms): 2
+ Longest Sequence: [(floating,12,32),(zeus,33,60),(poseidon,61,84),(marenostrum,85,108),(nautilus,109,128)]
+   Shortest Delay: 123
+    Longest Delay: 173
+     Medium Delay: 147.25
+Calculation Time (ms): 3
 
 
 Testing for 2 crane(s)
-Shortest Delay: 8
 Shortest Sequence: [(marenostrum,8,20),(poseidon,21,33),(nautilus,34,44),(floating,45,55),(zeus,56,70)]
+ Longest Sequence: [(floating,12,32),(zeus,33,60),(poseidon,61,84),(marenostrum,85,108),(nautilus,109,128)]
+   Shortest Delay: 8
+    Longest Delay: 173
+     Medium Delay: 85.3
 Calculation Time (ms): 2
 
 
 Testing for 3 crane(s)
-Shortest Delay: 0
 Shortest Sequence: [(zeus,6,15),(poseidon,16,24),(marenostrum,25,33),(nautilus,34,41),(floating,42,49)]
+ Longest Sequence: [(floating,12,32),(zeus,33,60),(poseidon,61,84),(marenostrum,85,108),(nautilus,109,128)]
+   Shortest Delay: 0
+    Longest Delay: 173
+     Medium Delay: 57.666666666666664
 Calculation Time (ms): 2
 
-Calculation for N Vessels (ms): 6
+Calculation for N Vessels (ms): 7
 
 
 ----------------------
@@ -89,23 +116,32 @@ Number of Vessels: 6
 
 
 Testing for 1 crane(s)
-Shortest Delay: 229
 Shortest Sequence: [(marenostrum,8,31),(nautilus,32,51),(floating,52,72),(poseidon,73,96),(zeus,97,124),(odyssey,125,152)]
-Calculation Time (ms): 11
+ Longest Sequence: [(floating,12,32),(zeus,33,60),(odyssey,61,88),(poseidon,89,112),(marenostrum,113,136),(nautilus,137,156)]
+   Shortest Delay: 229
+    Longest Delay: 298
+     Medium Delay: 260.6666666666667
+Calculation Time (ms): 16
 
 
 Testing for 2 crane(s)
-Shortest Delay: 36
 Shortest Sequence: [(odyssey,7,21),(nautilus,22,32),(marenostrum,33,45),(poseidon,46,58),(floating,59,69),(zeus,70,84)]
-Calculation Time (ms): 11
+ Longest Sequence: [(floating,12,32),(zeus,33,60),(odyssey,61,88),(poseidon,89,112),(marenostrum,113,136),(nautilus,137,156)]
+   Shortest Delay: 36
+    Longest Delay: 298
+     Medium Delay: 161.0875
+Calculation Time (ms): 15
 
 
 Testing for 3 crane(s)
-Shortest Delay: 0
 Shortest Sequence: [(zeus,6,15),(marenostrum,16,24),(nautilus,25,32),(odyssey,33,42),(poseidon,43,51),(floating,52,59)]
-Calculation Time (ms): 11
+ Longest Sequence: [(floating,12,32),(zeus,33,60),(odyssey,61,88),(poseidon,89,112),(marenostrum,113,136),(nautilus,137,156)]
+   Shortest Delay: 0
+    Longest Delay: 298
+     Medium Delay: 111.55555555555556
+Calculation Time (ms): 15
 
-Calculation for N Vessels (ms): 34
+Calculation for N Vessels (ms): 46
 
 
 ----------------------
@@ -113,29 +149,41 @@ Number of Vessels: 7
 
 
 Testing for 1 crane(s)
-Shortest Delay: 343
 Shortest Sequence: [(marenostrum,8,31),(nautilus,32,51),(floating,52,72),(poseidon,73,96),(atlantis,97,121),(zeus,122,149),(odyssey,150,177)]
-Calculation Time (ms): 91
+ Longest Sequence: [(atlantis,11,35),(zeus,36,63),(odyssey,64,91),(poseidon,92,115),(marenostrum,116,139),(floating,140,160),(nautilus,161,180)]
+   Shortest Delay: 343
+    Longest Delay: 433
+     Medium Delay: 386.1190476190476
+Calculation Time (ms): 102
 
 
 Testing for 2 crane(s)
-Shortest Delay: 74
 Shortest Sequence: [(odyssey,7,21),(nautilus,22,32),(marenostrum,33,45),(poseidon,46,58),(floating,59,69),(atlantis,70,82),(zeus,83,97)]
-Calculation Time (ms): 89
+ Longest Sequence: [(atlantis,11,35),(zeus,36,63),(odyssey,64,91),(poseidon,92,115),(marenostrum,116,139),(floating,140,160),(nautilus,161,180)]
+   Shortest Delay: 74
+    Longest Delay: 433
+     Medium Delay: 246.22738095238094
+Calculation Time (ms): 85
 
 
 Testing for 3 crane(s)
-Shortest Delay: 7
 Shortest Sequence: [(odyssey,7,16),(poseidon,17,25),(marenostrum,26,34),(nautilus,35,42),(atlantis,43,51),(floating,52,59),(zeus,60,69)]
-Calculation Time (ms): 88
+ Longest Sequence: [(atlantis,11,35),(zeus,36,63),(odyssey,64,91),(poseidon,92,115),(marenostrum,116,139),(floating,140,160),(nautilus,161,180)]
+   Shortest Delay: 7
+    Longest Delay: 433
+     Medium Delay: 174.0626984126984
+Calculation Time (ms): 111
 
 
 Testing for 4 crane(s)
-Shortest Delay: 0
 Shortest Sequence: [(zeus,6,13),(poseidon,14,20),(marenostrum,21,27),(nautilus,28,33),(floating,34,39),(odyssey,40,47),(atlantis,48,54)]
-Calculation Time (ms): 88
+ Longest Sequence: [(atlantis,11,35),(zeus,36,63),(odyssey,64,91),(poseidon,92,115),(marenostrum,116,139),(floating,140,160),(nautilus,161,180)]
+   Shortest Delay: 0
+    Longest Delay: 433
+     Medium Delay: 132.2
+Calculation Time (ms): 87
 
-Calculation for N Vessels (ms): 359
+Calculation for N Vessels (ms): 385
 
 
 ----------------------
@@ -143,35 +191,50 @@ Number of Vessels: 8
 
 
 Testing for 1 crane(s)
-Shortest Delay: 487
 Shortest Sequence: [(marenostrum,8,31),(nautilus,32,51),(floating,52,72),(poseidon,73,96),(atlantis,97,121),(zeus,122,149),(odyssey,150,177),(triton,178,205)]
-Calculation Time (ms): 857
+ Longest Sequence: [(triton,14,41),(zeus,42,69),(odyssey,70,97),(atlantis,98,122),(poseidon,123,146),(marenostrum,147,170),(floating,171,191),(nautilus,192,211)]
+   Shortest Delay: 487
+    Longest Delay: 634
+     Medium Delay: 548.8392857142857
+Calculation Time (ms): 874
 
 
 Testing for 2 crane(s)
-Shortest Delay: 125
 Shortest Sequence: [(odyssey,7,21),(nautilus,22,32),(marenostrum,33,45),(poseidon,46,58),(floating,59,69),(atlantis,70,82),(zeus,83,97),(triton,98,112)]
-Calculation Time (ms): 823
+ Longest Sequence: [(triton,14,41),(zeus,42,69),(odyssey,70,97),(atlantis,98,122),(poseidon,123,146),(marenostrum,147,170),(floating,171,191),(nautilus,192,211)]
+   Shortest Delay: 125
+    Longest Delay: 634
+     Medium Delay: 359.9949404761905
+Calculation Time (ms): 886
 
 
 Testing for 3 crane(s)
-Shortest Delay: 25
 Shortest Sequence: [(odyssey,7,16),(poseidon,17,25),(marenostrum,26,34),(nautilus,35,42),(atlantis,43,51),(floating,52,59),(zeus,60,69),(triton,70,79)]
-Calculation Time (ms): 817
+ Longest Sequence: [(triton,14,41),(zeus,42,69),(odyssey,70,97),(atlantis,98,122),(poseidon,123,146),(marenostrum,147,170),(floating,171,191),(nautilus,192,211)]
+   Shortest Delay: 25
+    Longest Delay: 634
+     Medium Delay: 259.5124007936508
+Calculation Time (ms): 840
 
 
 Testing for 4 crane(s)
-Shortest Delay: 1
 Shortest Sequence: [(zeus,6,13),(poseidon,14,20),(marenostrum,21,27),(nautilus,28,33),(floating,34,39),(odyssey,40,47),(atlantis,48,54),(triton,55,62)]
-Calculation Time (ms): 846
+ Longest Sequence: [(triton,14,41),(zeus,42,69),(odyssey,70,97),(atlantis,98,122),(poseidon,123,146),(marenostrum,147,170),(floating,171,191),(nautilus,192,211)]
+   Shortest Delay: 1
+    Longest Delay: 634
+     Medium Delay: 199.38355654761904
+Calculation Time (ms): 880
 
 
 Testing for 5 crane(s)
-Shortest Delay: 0
 Shortest Sequence: [(zeus,6,12),(poseidon,13,18),(marenostrum,19,24),(nautilus,25,29),(floating,30,34),(odyssey,35,41),(atlantis,42,47),(triton,48,54)]
-Calculation Time (ms): 804
+ Longest Sequence: [(triton,14,41),(zeus,42,69),(odyssey,70,97),(atlantis,98,122),(poseidon,123,146),(marenostrum,147,170),(floating,171,191),(nautilus,192,211)]
+   Shortest Delay: 0
+    Longest Delay: 634
+     Medium Delay: 160.93821428571428
+Calculation Time (ms): 887
 
-Calculation for N Vessels (ms): 4149
+Calculation for N Vessels (ms): 4368
 
 
 ----------------------
@@ -179,35 +242,50 @@ Number of Vessels: 9
 
 
 Testing for 1 crane(s)
-Shortest Delay: 627
 Shortest Sequence: [(marenostrum,8,31),(nautilus,32,51),(floating,52,72),(neptune,73,94),(poseidon,95,118),(atlantis,119,143),(zeus,144,171),(odyssey,172,199),(triton,200,227)]
-Calculation Time (ms): 8448
+ Longest Sequence: [(triton,14,41),(zeus,42,69),(odyssey,70,97),(atlantis,98,122),(poseidon,123,146),(marenostrum,147,170),(neptune,171,192),(floating,193,213),(nautilus,214,233)]
+   Shortest Delay: 627
+    Longest Delay: 806
+     Medium Delay: 710.2638888888889
+Calculation Time (ms): 9303
 
 
 Testing for 2 crane(s)
-Shortest Delay: 178
 Shortest Sequence: [(odyssey,7,21),(nautilus,22,32),(marenostrum,33,45),(poseidon,46,58),(floating,59,69),(neptune,70,81),(atlantis,82,94),(zeus,95,109),(triton,110,124)]
-Calculation Time (ms): 8305
+ Longest Sequence: [(triton,14,41),(zeus,42,69),(odyssey,70,97),(atlantis,98,122),(poseidon,123,146),(marenostrum,147,170),(neptune,171,192),(floating,193,213),(nautilus,214,233)]
+   Shortest Delay: 178
+    Longest Delay: 806
+     Medium Delay: 473.93882275132273
+Calculation Time (ms): 9045
 
 
 Testing for 3 crane(s)
-Shortest Delay: 44
 Shortest Sequence: [(odyssey,7,16),(poseidon,17,25),(marenostrum,26,34),(nautilus,35,42),(atlantis,43,51),(floating,52,59),(neptune,60,67),(zeus,68,77),(triton,78,87)]
-Calculation Time (ms): 8462
+ Longest Sequence: [(triton,14,41),(zeus,42,69),(odyssey,70,97),(atlantis,98,122),(poseidon,123,146),(marenostrum,147,170),(neptune,171,192),(floating,193,213),(nautilus,214,233)]
+   Shortest Delay: 44
+    Longest Delay: 806
+     Medium Delay: 345.95608465608467
+Calculation Time (ms): 8791
 
 
 Testing for 4 crane(s)
-Shortest Delay: 6
 Shortest Sequence: [(zeus,6,13),(poseidon,14,20),(marenostrum,21,27),(nautilus,28,33),(floating,34,39),(odyssey,40,47),(atlantis,48,54),(triton,55,62),(neptune,63,69)]
-Calculation Time (ms): 8154
+ Longest Sequence: [(triton,14,41),(zeus,42,69),(odyssey,70,97),(atlantis,98,122),(poseidon,123,146),(marenostrum,147,170),(neptune,171,192),(floating,193,213),(nautilus,214,233)]
+   Shortest Delay: 6
+    Longest Delay: 806
+     Medium Delay: 268.70842427248675
+Calculation Time (ms): 8782
 
 
 Testing for 5 crane(s)
-Shortest Delay: 0
 Shortest Sequence: [(zeus,6,12),(poseidon,13,18),(marenostrum,19,24),(nautilus,25,29),(floating,30,34),(odyssey,35,41),(atlantis,42,47),(triton,48,54),(neptune,55,60)]
-Calculation Time (ms): 8412
+ Longest Sequence: [(triton,14,41),(zeus,42,69),(odyssey,70,97),(atlantis,98,122),(poseidon,123,146),(marenostrum,147,170),(neptune,171,192),(floating,193,213),(nautilus,214,233)]
+   Shortest Delay: 0
+    Longest Delay: 806
+     Medium Delay: 218.33234126984127
+Calculation Time (ms): 8770
 
-Calculation for N Vessels (ms): 41783
+Calculation for N Vessels (ms): 44691
 
 
 ----------------------
@@ -215,35 +293,50 @@ Number of Vessels: 10
 
 
 Testing for 1 crane(s)
-Shortest Delay: 753
 Shortest Sequence: [(aurora,5,24),(nautilus,25,44),(floating,45,65),(neptune,66,87),(poseidon,88,111),(marenostrum,112,135),(atlantis,136,160),(zeus,161,188),(odyssey,189,216),(triton,217,244)]
-Calculation Time (ms): 95002
+ Longest Sequence: [(neptune,16,37),(zeus,38,65),(odyssey,66,93),(triton,94,121),(atlantis,122,146),(poseidon,147,170),(marenostrum,171,194),(floating,195,215),(nautilus,216,235),(aurora,236,255)]
+   Shortest Delay: 753
+    Longest Delay: 1022
+     Medium Delay: 894.9888888888889
+Calculation Time (ms): 102836
 
 
 Testing for 2 crane(s)
-Shortest Delay: 230
 Shortest Sequence: [(aurora,5,15),(marenostrum,16,28),(nautilus,29,39),(poseidon,40,52),(floating,53,63),(neptune,64,75),(atlantis,76,88),(zeus,89,103),(odyssey,104,118),(triton,119,133)]
-Calculation Time (ms): 94962
+ Longest Sequence: [(neptune,16,37),(zeus,38,65),(odyssey,66,93),(triton,94,121),(atlantis,122,146),(poseidon,147,170),(marenostrum,171,194),(floating,195,215),(nautilus,216,235),(aurora,236,255)]
+   Shortest Delay: 230
+    Longest Delay: 1022
+     Medium Delay: 607.9802579365079
+Calculation Time (ms): 100338
 
 
 Testing for 3 crane(s)
-Shortest Delay: 68
 Shortest Sequence: [(aurora,5,12),(poseidon,13,21),(nautilus,22,29),(odyssey,30,39),(marenostrum,40,48),(atlantis,49,57),(floating,58,65),(neptune,66,73),(zeus,74,83),(triton,84,93)]
-Calculation Time (ms): 92836
+ Longest Sequence: [(neptune,16,37),(zeus,38,65),(odyssey,66,93),(triton,94,121),(atlantis,122,146),(poseidon,147,170),(marenostrum,171,194),(floating,195,215),(nautilus,216,235),(aurora,236,255)]
+   Shortest Delay: 68
+    Longest Delay: 1022
+     Medium Delay: 451.0634126984127
+Calculation Time (ms): 100171
 
 
 Testing for 4 crane(s)
-Shortest Delay: 14
 Shortest Sequence: [(aurora,5,10),(poseidon,11,17),(marenostrum,18,24),(nautilus,25,30),(floating,31,36),(odyssey,37,44),(atlantis,45,51),(triton,52,59),(neptune,60,66),(zeus,67,74)]
-Calculation Time (ms): 89196
+ Longest Sequence: [(neptune,16,37),(zeus,38,65),(odyssey,66,93),(triton,94,121),(atlantis,122,146),(poseidon,147,170),(marenostrum,171,194),(floating,195,215),(nautilus,216,235),(aurora,236,255)]
+   Shortest Delay: 14
+    Longest Delay: 1022
+     Medium Delay: 354.48507605820106
+Calculation Time (ms): 101806
 
 
 Testing for 5 crane(s)
-Shortest Delay: 0
 Shortest Sequence: [(aurora,5,9),(zeus,10,16),(poseidon,17,22),(marenostrum,23,28),(nautilus,29,33),(floating,34,38),(odyssey,39,45),(atlantis,46,51),(triton,52,58),(neptune,59,64)]
-Calculation Time (ms): 88732
+ Longest Sequence: [(neptune,16,37),(zeus,38,65),(odyssey,66,93),(triton,94,121),(atlantis,122,146),(poseidon,147,170),(marenostrum,171,194),(floating,195,215),(nautilus,216,235),(aurora,236,255)]
+   Shortest Delay: 0
+    Longest Delay: 1022
+     Medium Delay: 290.50979695767194
+Calculation Time (ms): 99645
 
-Calculation for N Vessels (ms): 460729
+Calculation for N Vessels (ms): 504796
 
 
 

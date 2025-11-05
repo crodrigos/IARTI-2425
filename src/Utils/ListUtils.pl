@@ -19,25 +19,29 @@ createMatrixFromListNonEmpty1(L,[L2|M]):-
     createMatrixFromListNonEmpty1(L1,M).
 
 
-createMatrixFromListNonEmpty1(Height, List, Height, [List]).
-createMatrixFromListNonEmpty1(Height, List, CurrHeight, [Head|Matrix]):-
-    CurrHeight1 is CurrHeight+1,!,
-    append(Head, Tail, List),
-    Head\=[],Tail\=[],
-    createMatrixFromListNonEmpty1(Height, Tail, CurrHeight1,Matrix).
+createUniqueSublist(L,Height,R):-
+    length(L, Length),
+    N is Length-Height,
+    concatElementsInList1(L,N,R).
 
-createMatrixFromListNonEmpty(List, Height, Matrix):-
-    permutation(List,ListTemp),
-    createMatrixFromListNonEmpty1(Height, ListTemp, 0, Matrix).
+concatElementsInList1(L,N,L1):-N=<0,!,allToList(L,L1).
+concatElementsInList1(L,N,[V|Rest2]):-
+    N1 is N - 1,
+    concatElementsInList1(L, N1, Temp),
+    select(V1, Temp, Rest1),
+    select(V2, Rest1, Rest2),
+    compareElem1(V1,V2),     % enforce canonical order so we never merge V2 before V1
+    append(V1, V2, V).
 
-checkMatrixRepeats:-
-    findall(M, createMatrixFromListNonEmpty([1,2,3,4], 3, M), LM).
-    % FIXME: 
+compareElem1(V1,[FirstV2|_]):-
+    last(V1, LastV1),
+    LastV1 @< FirstV2.
 
 
+normalize_to_list(V, V) :- is_list(V),!.
+normalize_to_list(V, [V]).
 
-same_matrix(M1, M2) :-
-    length(M1, L1),
-    length(M2, L2),
-    L1 =:= L2,               % must have same number of sublists
-    permutation(M1, M2),!.   % check if one is a permutation of the other
+allToList([],[]).
+allToList([H|T],[H1|T1]):-
+    normalize_to_list(H,H1),
+    allToList(T, T1).

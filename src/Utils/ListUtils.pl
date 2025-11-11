@@ -1,5 +1,5 @@
 
-:-module(listutils, [
+:- module(listutils, [
     range/2,
     createUniqueSublist/3
 ]).
@@ -50,3 +50,53 @@ allToList([],[]).
 allToList([H|T],[H1|T1]):-
     normalize_to_list(H,H1),
     allToList(T, T1).
+
+comb(0,_,[]).
+comb(N,[X|T],[X|Comb]):-N>0,N1 is N-1,comb(N1,T,Comb).
+comb(N,[_|T],Comb):-N>0,comb(N,T,Comb).
+
+split_k_parts(List, K, P) :-
+    split_k_parts(List, K, [], P).
+
+% Base case — all parts selected, no elements left
+split_k_parts([], 0, Acc, Parts) :-
+    reverse(Acc, Parts).
+split_k_parts(List, K, Acc, Parts) :-
+    K > 0,
+    length(List, Len),
+    MinSize is 1,
+    MaxSize is Len - (K - 1),   % ensure room for remaining parts
+    between(MinSize, MaxSize, Take),
+
+    comb(Take, List, Part),     % your combination predicate (unordered)
+    remove_all(Part, List, Rest),
+
+    K1 is K-1,
+    split_k_parts(Rest, K1, [Part|Acc], Parts).
+
+remove_all([], L, L).
+remove_all([H|T], L, R) :-
+    select(H, L, L1),
+    remove_all(T, L1, R).
+
+
+createEmptyList(N,[]):- N=<0,!.
+createEmptyList(N,[EMPTY|R]):-
+    N1 is N-1,
+    createEmptyList(N1, R).
+
+subset_range(List, Start, End, Sub) :-
+    Start =< End,
+    Len is End - Start + 1,
+    length(Prefix, Start),
+    append(Prefix, Rest, List),
+    length(Sub, Len),
+    append(Sub, _, Rest).
+
+getFirstXOfList(_, [], []) :- !.
+getFirstXOfList(0, _, []) :- !.
+getFirstXOfList(X, [H|T], [H|R]) :-
+    X > 0,
+    X1 is X - 1,
+    getFirstXOfList(X1, T, R).
+

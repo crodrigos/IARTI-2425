@@ -3,6 +3,8 @@
 % First support for IARTI project 2025/2026
 % Scheduling Vessels Unload/Load
 
+:-use_module('vessels').
+
 :-dynamic shortest_delay/2.
 
 sequence_temporization(LV,SeqTriplets):-
@@ -19,7 +21,8 @@ sequence_temporization1(EndPrevSeq,[V|LV],[(V,TInUnload,TEndLoad)|SeqTriplets]):
 
 sum_delays([],0).
 sum_delays([(V,_,TEndLoad)|LV],S):-
-	vessel(V,_,TDep,_,_),TPossibleDep is TEndLoad+1,
+	vessel(V,_,TDep,_,_),
+    TPossibleDep is TEndLoad+1,
 	((TPossibleDep>TDep,!,SV is TPossibleDep-TDep);SV is 0),
 	sum_delays(LV,SLV),
 	S is SV+SLV.

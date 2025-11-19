@@ -77,9 +77,12 @@ testForDifNumVessels(N):-
 
 sumDelays([],0).
 sumDelays([(Vessel,_,TEndLoading)|Rest],Sum):-
-    vessel(Vessel,_,TDepart,_,_),
-    TRealDepart is TEndLoading+1,
-    ((TRealDepart>TDepart,!,Delay is TRealDepart-TDepart);Delay is 0),
+    vessel(Vessel,_,TExpectedDepart,_,_),
+    TRealDeparture is TEndLoading+1,
+    (
+        (TRealDeparture>TExpectedDepart,!,Delay is TRealDeparture-TExpectedDepart);
+        Delay is 0
+    ),
     sumDelays(Rest,SumRest),
     Sum is Delay + SumRest.
 

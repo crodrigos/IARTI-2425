@@ -44,9 +44,10 @@ nCranes(NCranes):-map:map("gen_ncranes", NCranes).
  */
 % REPETIR,
 
+% TODO: Add Generic Goal for Mutation, Crossover and Evaluation
 genetic(
         VesselList, NCranes, 
-        MaxGeneration, CrossProb, MutProb,
+        MaxGeneration, CrossProb, MutProb, 
         Best, Delay
     ):-
     mutation_probability(MutProb),
@@ -90,7 +91,6 @@ genNewPopulation(Population, NewPopulation):-
     
 
 genNewPopulation1(Population, OUT):-
-
     select(El1, Population,PopulationREST),
     select(El2, PopulationREST,_),
 
@@ -129,7 +129,7 @@ mutate1(P1,C,[H1,H2|T], [M1,M2|MT]):-
     ((C>=P1)->
         H1=M2,H2=M1,T=MT,!
     ;
-        H1=M1,
+        H1=M1,ç
         C1 is C+1,
         mutate1(P1,C1,[H2|T], [M2|MT])
     ).
@@ -231,5 +231,5 @@ testCrossover(D1,D2):-
     orderCrossover(L1,L2,D1,D2).
 
 testGenetic(V,C,Gens,B,D):-
-    allVessels(V,VL),
+    allVesselsRandom(V,VL),
     genetic(VL,Gens,C,B,D).

@@ -7,25 +7,36 @@
 
 :-dynamic shortest_delay/2.
 
-sequence_temporization(LV,SeqTriplets):-
-    sequence_temporization1(0,LV,SeqTriplets).
+sequence_temporization(OrderedVesselList, TripletSequence) :-
+    sequence_temporization1(0, OrderedVesselList, TripletSequence).
 
-sequence_temporization1(_,[],[]).
-sequence_temporization1(EndPrevSeq,[V|LV],[(V,TInUnload,TEndLoad)|SeqTriplets]):-
-    vessel(V,TIn,_,TUnload,TLoad),
-    ((TIn> EndPrevSeq,!, TInUnload is TIn); TInUnload is EndPrevSeq+1),
-    TEndLoad is TInUnload + TUnload+TLoad -1,
-    sequence_temporization1(TEndLoad,LV,SeqTriplets).
+sequence_temporization1(_, [], []) :- !.
+sequence_temporization1(
+    EndPrevSeq,
+    [Vessel | LV],
+    [(Vessel, TStartUnloading, TEndLoading) | Seq]
+) :-
+    vessel(Vessel, TExpectedArrival, _, DUnloading, DLoading),
+    ((TExpectedArrival > EndPrevSeq, !, TStartUnloading is TExpectedArrival);
+     TStartUnloading is EndPrevSeq + 1),
+    OperationDuration is DUnloading + DLoading,
+    TEndLoading is TStartUnloading + OperationDuration - 1,
+    sequence_temporization1(TEndLoading, LV, Seq).
+
 
 
 
 sum_delays([],0).
-sum_delays([(V,_,TEndLoad)|LV],S):-
-	vessel(V,_,TDep,_,_),
-    TPossibleDep is TEndLoad+1,
-	((TPossibleDep>TDep,!,SV is TPossibleDep-TDep);SV is 0),
-	sum_delays(LV,SLV),
-	S is SV+SLV.
+sum_delays([(Vessel,_,TEndLoading)|Rest],Sum):-
+    vessel(Vessel,_,TExpectedDepart,_,_),
+    TRealDeparture is TEndLoading+1,
+    (
+        (TRealDeparture>TExpectedDepart,!,Delay is TRealDeparture-TExpectedDepart);
+        Delay is 0
+    ),
+    sum_delays(Rest,SumRest),
+    Sum is Delay + SumRest.
+
 
 
 obtain_seq_shortest_delay(SeqBetterTriplets, SShortestDelay):-

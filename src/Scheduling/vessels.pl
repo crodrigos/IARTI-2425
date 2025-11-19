@@ -5,7 +5,8 @@
     vessel/5,
     addVessel/5,
     allVessels/1,
-    allVessels/2
+    allVessels/2,
+    allVesselsRandom/2
 ]).
 
 :- dynamic vessel/5.
@@ -25,20 +26,25 @@ allVessels(N, Vessels):-
 allVessels(Vessels):- 
 	findall(X, vessel(X,_,_,_,_), Vessels).
 
+allVesselsRandom(N, Vessels):-
+    allVessels(VL),
+    random_permutation(VL, Perm),
+    findall(E, (nth1(I,Perm,E), I =< N), Vessels).
+    
 
+%! vessel (-Ref, -ArrivingTime, -DepartureTime, -UnloadingTime, -LoadingTime)
+vessel(zeus, 6, 63, 10, 16).
+vessel(poseidon, 23, 50, 9, 7).
+vessel(marenostrum, 8, 40, 5, 12).
+vessel(nautilus, 10, 30, 0, 8).
+vessel(floating, 36, 70, 12, 0).
 
-%! vessel (ref, ArrivingTime, DepartureTime, UnloadingTime, LoadingTime)
-vessel(zeus,        6,  63, 10, 16).
-vessel(poseidon,   10,  55, 12, 10).
-vessel(marenostrum, 8,  50,  8, 14).
-vessel(nautilus,    9,  45,  6, 12).
-vessel(floating,   12,  60,  9, 10).
-
-vessel(odyssey,     7,  48, 11, 15).   
-vessel(atlantis,   11,  58, 10, 13).  
-vessel(triton,     14,  62, 12, 14).   
-vessel(neptune,    16,  65,  8, 12).   
-vessel(aurora,      5,  40,  7, 11).   
+vessel(atlantis, 15, 55, 8, 10).
+vessel(odyssey, 28, 65, 7, 9).
+vessel(triton, 45, 80, 6, 11).
+vessel(neptune, 50, 90, 10, 10).
+vessel(aquarius, 60, 95, 5, 8).
+vessel(aurora, 20, 48, 4, 6).
 
 
 

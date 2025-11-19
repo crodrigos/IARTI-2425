@@ -12,8 +12,18 @@
     '../vars.pl'
 ]).
 
-%! obtainShortestSequence(+LListOfVessels, +NCranesAvailable) is nondet
-obtainShortestSequence(ListOfVessels, NCranesAvailable):-
+obtainShortestSequence(ListOfVessels, NCranesAvailable, Sequence, Delay):-
+    ((
+        shortest_delay([], 9999999),
+        (obtainShortestSequence_LinearPermutation1(ListOfVessels, NCranesAvailable);true),
+        shortest_delay(_, Delay),
+        Delay =< 0, !
+    );true),
+    shortest_delay(Sequence, Delay).
+
+
+%! obtainShortestSequence(+ListOfVessels, +NCranesAvailable) is nondet
+obtainShortestSequenceVerbose(ListOfVessels, NCranesAvailable):-
     ((
         shortest_delay([], 9999999),
         longest_delay([], 0),
@@ -56,3 +66,8 @@ obtainShortestSequence_LinearPermutation1(ListOfVessels, NCranes):-
     compareMediumDelay(Delay),
     fail.
 
+getSchedule:-
+    allVessels(6, VL),
+    obtainShortestSequence(VL, 1, Seq, D),
+    bw("Delay: ", D),
+    craneScheduling:writeCraneDailySchedules(Seq).

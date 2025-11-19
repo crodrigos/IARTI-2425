@@ -1,12 +1,23 @@
 
-divideListInXDif(L,R):-
-
-genNonEmptyUniqueMatrix(L,H,M):-
-    genNonEmptyUniqueMatrix1(L,N,0,M).
-
-genNonEmptyUniqueMatrix1(_,H,H,[]).
-genNonEmptyUniqueMatrix1(L,N,H,[L2|Rest]):-
-    N1 is N+1,
-    append(L1,L2,L),
+eval(Pop, X):-
+    random(0, 1000, X).
     
-    genNonEmptyUniqueMatrix1(L1,N1,H,Rest).
+
+b(Population,EvalGoal,Result):-
+    findall(
+        (V,El), 
+        (
+            member(El, Population),
+            call(EvalGoal,El, V)
+        ), 
+        R1
+    ),
+    sort(R1, R1S),
+    findall(
+        El,
+        (
+            member((V,El), R1S)
+        ),
+        Result
+    ).
+    

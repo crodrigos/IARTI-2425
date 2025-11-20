@@ -11,9 +11,12 @@
 ]).
 
 :- use_module([
-    '../../Utils/Map.object.pl'
+    '../Utils/Map.object.pl'
 ]).
 
+
+max_cranes(N) :- map:map("maxCranes", N).
+:- max_cranes(7).
 
 nPermutations(N):-map:map("nPermutations",N).
 incPerms:-nPermutations(N), N1 is N+1, nPermutations(N1).

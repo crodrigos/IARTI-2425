@@ -14,33 +14,10 @@
     'vessels.pl'
 ]).
 
-% Funçoes heuristicas
-:- use_module([
-    'algorithms/LinearPermutations/LinearPermutations.pl'
-]).
-
-
 
 :-['Schedule.object.pl'].
 :-['scheduling_vessels_1.pl']. % Given Code
 
-
-
-
-
-
-
-%:- module(cranes, [testForDifNumVessels/0]).
-
-% ---- PREDICADOS DINAMICOS ----
-
-% Current Shortest Schedule and Interval
-% shortest_delay(Sequence, Delay)
-% WARNING: DO NOT DO SOMETHING LIKE shortest_delay(S, 9999999) 
-
-max_cranes(N) :-
-    mapgetset("maxCranes", N).
-:- max_cranes(7).
 
 sumDelays([],0).
 sumDelays([(Vessel,_,TEndLoading)|Rest],Sum):-

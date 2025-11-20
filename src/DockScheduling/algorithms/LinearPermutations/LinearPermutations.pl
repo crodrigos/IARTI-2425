@@ -67,7 +67,8 @@ obtainShortestSequence_LinearPermutation1(ListOfVessels, NCranes):-
     fail.
 
 getSchedule:-
-    allVessels(6, VL),
+    allVessels(5, VL),
     obtainShortestSequence(VL, 1, Seq, D),
+    bw("Vessels: ", VL),
     bw("Delay: ", D),
-    craneScheduling:writeCraneDailySchedules(Seq).
+    craneScheduling:writeDockDailySchedules(Seq).

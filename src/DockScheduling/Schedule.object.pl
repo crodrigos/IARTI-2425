@@ -51,7 +51,7 @@ writeSchedule1(NCrane, [CraneSchedule | RestSchedules]) :-
 
 
 
-writeCraneDailySchedules(Vessels) :-
+writeDockDailySchedules(Vessels) :-
     findall(EventPair,
         (
             member((Vessel, Arr, Dep), Vessels),

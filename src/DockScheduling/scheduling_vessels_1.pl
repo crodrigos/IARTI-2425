@@ -46,7 +46,7 @@ obtain_seq_shortest_delay(SeqBetterTriplets, SShortestDelay):-
 
 obtain_seq_shortest_delay1:-
     asserta(shortest_delay(_,100000)),
-    allVessels(ListOfVessels),
+    allVessels(5,ListOfVessels),
     permutation(ListOfVessels,SeqV),
     sequence_temporization(SeqV,SeqTriplets),
     sum_delays(SeqTriplets,S),

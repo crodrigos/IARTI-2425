@@ -102,6 +102,6 @@ sequenceTemporization1(
     TEndLoading is TStartUnloading + OperationDuration,
     sequenceTemporization1(TEndLoading, NCranes, LV, Seq).
 
-vesselSequenceDelay(VL, NCranes, Sequence, Delay):-
+vesselSequenceDelay(VL, NCranes, VSeq, Delay):-
     sequenceTemporization(VL,NCranes,VSeq),
     sumDelays(VSeq, Delay).

@@ -42,39 +42,6 @@ max_cranes(N) :-
     mapgetset("maxCranes", N).
 :- max_cranes(7).
 
-
-
-testForDifNumVessels:-
-    allVessels(VL_temp), length(VL_temp, NumberOfVessels),
-    testForDifNumVessels(NumberOfVessels).
-
-testForDifNumVessels(N):-
-    range(N, NVL),
-    
-    ProgramTimerID is 0001,
-    reset_timer(ProgramTimerID), start_timer(ProgramTimerID),
-    max_cranes(NCranes), !,
-
-    ((
-        member(NVessels, NVL),
-        allVessels(NVessels, ListOfVessels),
-        bw("\n\n", "----------------------"),
-        bw("Number of Vessels: ", NVessels),
-
-        CraneTimerID = "craneId", reset_timer(CraneTimerID), start_timer(CraneTimerID),
-
-        linearPermutations:obtainShortestSequence(ListOfVessels, NCranes),
-
-        get_elapsed_time(CraneTimerID, Time),
-        bw("\nCalculation for N Vessels (ms): ", Time),
-
-        fail
-    ); true), bw("\n\n").
-
-
-
-
-
 sumDelays([],0).
 sumDelays([(Vessel,_,TEndLoading)|Rest],Sum):-
     vessel(Vessel,_,TExpectedDepart,_,_),

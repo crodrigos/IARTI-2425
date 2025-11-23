@@ -1,7 +1,13 @@
 
+:- module(schedule, []).
+
+
+
 :-use_module('../Utils/BetterWrite').
 
-:-use_module(library(assoc))
+:-use_module(library(assoc)).
+
+
 
 % Schedule - 
 % [
@@ -11,7 +17,7 @@
 % [CraneX, [ [boatX, T_Loading, T_Unloading, T_E] | ...]],
 % ]
 
-% addVesselToSchedule(+Crane, +VesselSchedule, +CurrentSchedule, -Ve)
+%! addVesselToSchedule(+Crane, +VesselSchedule, +CurrentSchedule, -FullSchedele).
 addVesselToSchedule(Crane, VesselSchedule, [], [[Crane, [VesselSchedule]]]).
 addVesselToSchedule(Crane, VesselSchedule,
     [[Crane, CraneSchedule] | Rest],

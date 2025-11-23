@@ -81,7 +81,7 @@ remove_all([H|T], L, R) :-
 
 
 createEmptyList(N,[]):- N=<0,!.
-createEmptyList(N,[EMPTY|R]):-
+createEmptyList(N,[_|R]):-
     N1 is N-1,
     createEmptyList(N1, R).
 

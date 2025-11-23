@@ -1,7 +1,4 @@
-:- module(genetic, [
-   genetic/5,
-   genetic/7
-]).
+:- module(geneticDock, []).
 
 :- use_module([
     '../../../Utils/Timer.object',
@@ -10,7 +7,8 @@
     '../../../Utils/BetterWrite.pl',
     '../../vessels.pl',
     '../../CraneScheduling.pl',
-    '../vars.pl'
+    '../../vars.pl',
+    '../../../Heuristic/Genetic/Genetic.pl'
 ]).
 :- use_module(library(lists)).
 :- use_module(library(quintus)).
@@ -47,74 +45,20 @@ nCranes(NCranes):-map:map("gen_ncranes", NCranes).
 % TODO: Add Generic Goal for Mutation, Crossover and Evaluation
 genetic(
         VesselList, NCranes, 
-        MaxGeneration, CrossProb, MutProb, 
+        PopulationSize, MaxGenerations, 
+        CrossProb, MutProb, 
         Best, Delay
     ):-
-    mutation_probability(MutProb),
-    crossover_probability(CrossProb),
-    genetic(VesselList, NCranes, MaxGenerations, Best, Delay).
-
-genetic(VesselList, NCranes, MaxGenerations, Best, Delay):-
-    nCranes(NCranes),
-    max_generations(MaxGenerations),
-    
-    generateInitialPopulation(VesselList,InitialPop),
-    
-    genetic1(MaxGenerations, 0, InitialPop, Pop),
-    Pop = [Best|_],
-    vesselSequenceDelay(Best, NCranes, Seq, Delay).
-
-genetic1(G,G,P,P):-!.
-genetic1(_,_,Population,Final):-
-    [Best|_] = Population,
-    nCranes(NCranes),
-    vesselSequenceDelay(Best, NCranes, _, Delay),
-    Delay==0,!,Population=Final.
-
-genetic1(MaxGeneration, CurrGeneration, Population, Final):-
-    
-    genNewPopulation(Population, NewPopulation),
-    mutatePopulation(NewPopulation,MutatePop),
-
-    length(MutatedPop, Lmut), 
-
-    evaluateAndTrimPopulation(MutatePop, NewGen),    
-
-    C1 is CurrGeneration+1,
-    genetic1(MaxGeneration, C1, NewGen, Final),!.
-
-
-genNewPopulation(Population, NewPopulation):-
-    findall(Out, genNewPopulation1(Population, Out), Bag),
-    append(Bag, NewPopulation_temp),
-    append(Population, NewPopulation_temp, NewPopulation).
-    
-
-genNewPopulation1(Population, OUT):-
-    select(El1, Population,PopulationREST),
-    select(El2, PopulationREST,_),
-
-    random(PROB),
-    crossover_probability(CROSS_PROB),
-
-    ((PROB >= CROSS_PROB) ->
-        orderCrossover(El1,El2,Filho1,Filho2),!,
-        OUT = [Filho1, Filho2]
-    ;
-        OUT = []
-    ).
-
-mutatePopulation(Population, MutatedPop):-
-    findall(M, mutatePopulation1(Population,M), MutatedPop).
-
-mutatePopulation1(Population, MutatedEl):-
-    select(El, Population, _),
-    random(PROB),
-    mutation_probability(MUTATE_PROB),
-    (
-        (PROB >= MUTATE_PROB,!, mutate(El, MutatedEl));
-        MutatedEl = El
-    ).
+        nCranes(NCranes),
+        generateInitialPopulation(VesselList, PopulationSize, InitialPop),
+        genetic:genetic(
+            InitialPop,
+            MaxGenerations, PopulationSize,
+            geneticDock:orderCrossover, geneticDock:mutate, geneticDock:evaluate,
+            CrossProb, MutProb,
+            FinalPopulation
+        ),
+        [(Delay,Best)|_] = FinalPopulation.
 
 mutate([V], [V]):-!.
 mutate(VesselSequence, VesselSequenceMutated):-
@@ -129,35 +73,14 @@ mutate1(P1,C,[H1,H2|T], [M1,M2|MT]):-
     ((C>=P1)->
         H1=M2,H2=M1,T=MT,!
     ;
-        H1=M1,ç
+        H1=M1,
         C1 is C+1,
         mutate1(P1,C1,[H2|T], [M2|MT])
     ).
 
-evaluateAndTrimPopulation(Population, NewPop):-
+evaluate(VesselL, Delay):-
     nCranes(NCranes),
-    population_size(PopSize),
-
-    findall(D-VesselSeq, (
-        member(VesselSeq, Population),
-        sequenceTemporization(VesselSeq, NCranes, TripletSequence),
-        sumDelays(TripletSequence, D)
-    ), PopulationEval),
-
-    keysort(PopulationEval,PopulationSorted),
-
-    listutils:getFirstXOfList(PopSize, PopulationSorted, PopulationBest),
-
-    findall(
-        V, 
-        (
-            member((D-V), PopulationBest)
-            % bw("\tDelay: ", D)
-        ), 
-        NewPop
-    ).
-
-
+    vesselSequenceDelay(VesselL, NCranes, _, Delay).
 
 orderCrossover(Seq1, Seq2, D1, D2):-
     length(Seq1, L),
@@ -204,32 +127,22 @@ subsituteIfNotInList([H|T], V, [Output|Rest]):-
     subsituteIfNotInList(T,V,Rest).
 
 
-generateInitialPopulation(ListOfVessels,Population):-
-    population_size(PopSize),
-    generateInitialPopulation1(ListOfVessels,PopSize,Population).
-
 % generateInitialPopulation1(_,Size,Pop):-
 %     length(Pop,L2),
 %     Size=L2,!.
 
-generateInitialPopulation1(_,0,[]):-!.
-generateInitialPopulation1(ListOfVessels,Size,[Permutation|Rest]):-
+generateInitialPopulationRand(_,0,[]):-!.
+generateInitialPopulationRand(ListOfVessels,Size,[Permutation|Rest]):-
     Size1 is Size-1,
-    generateInitialPopulation1(ListOfVessels, Size1, Rest),
+    generateInitialPopulation(ListOfVessels, Size1, Rest),
     ((
         random_permutation(ListOfVessels, Permutation),
         \+member(Permutation,Rest),!
     );true).
 
-testCrossover(D1,D2):-
-    allVessels(10, VL),
-    random_permutation(VL,L1),
-    random_permutation(VL,L2),
-    
-    writeln(L1),
-    writeln(L2),
-    orderCrossover(L1,L2,D1,D2).
 
-testGenetic(V,C,Gens,B,D):-
-    allVesselsRandom(V,VL),
-    genetic(VL,Gens,C,B,D).
+generateInitialPopulation(V,1,[V]):-!.
+generateInitialPopulation(V,Size,[V|Rest]):-
+    Size1 is Size-1,
+    generateInitialPopulation(V,Size1,Rest),!.
+generateInitialPopulation(V,_,[V]):-!.

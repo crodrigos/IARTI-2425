@@ -44,7 +44,7 @@ compareLongestDelay(TripletSequence, Delay):-
     ); true).
 
 compareMediumDelay(Delay):-
-    medium_delay(Sum, N, Medium),
+    medium_delay(Sum, N, _),
     N1 is N+1,
     Sum1 is Sum+Delay,
     Medium1 is Sum1/N1,

@@ -5,6 +5,7 @@
     mremove/1,  
     mclean/0,
     mgetset/2,
+    map/2,
 
     mapset/2,
     mapget/2,

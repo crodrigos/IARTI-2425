@@ -8,8 +8,8 @@
 ]).
 
 :- use_module([
-    '../CraneScheduling.pl',
-    '../vars.pl'
+    '../../CraneScheduling.pl',
+    '../../vars.pl'
 ]).
 
 visionRange(N):-map:map("neighbor_range", N).
@@ -22,7 +22,8 @@ adjacentWeighedPermutation(Vessels,NCranes,Perm,W):-
 adjacentWeighedPermutation(Vessels,NCranes,AdjDist,Perm,W):-
     sequenceTemporization(Vessels,NCranes,VesselsSeq),
     
-    neighbourPermutation(Vessels,AdjDist,Perm), %adjacentPermutationDeg
+    neighbourPermutation(Vessels,AdjDist,Perm), 
+
     sequenceTemporization(Perm,NCranes, PermutationSeq),
 
     sumDelays(VesselsSeq,D1),
@@ -52,8 +53,6 @@ allNextNeighbors(Visited, NextNeighbors):-
         Next_temp 
     ),
     sort(Next_temp, NextNeighbors).
-    
-    
 
 adjacentPermutation([X,Y|T], [Y,X|T]).
 adjacentPermutation([H|T], [H|R]):-
@@ -61,5 +60,4 @@ adjacentPermutation([H|T], [H|R]):-
 adjacentPermutation([V], [V]).
 
 
-    
     

@@ -9,7 +9,7 @@
     '../../vessels.pl',
     '../../CraneScheduling.pl',
     '../../vars.pl',
-    '../vesselAdj.pl'
+    '../GraphTraversal/vesselAdj.pl'
 ]).
 
 nCranes(NCranes):-map:map("nCranes", NCranes).

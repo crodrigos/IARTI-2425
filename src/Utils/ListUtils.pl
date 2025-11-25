@@ -1,7 +1,8 @@
 
 :- module(listutils, [
     range/2,
-    createUniqueSublist/3
+    createUniqueSublist/3,
+    getFirstXOfList/3
 ]).
 
 range(N,Out):-

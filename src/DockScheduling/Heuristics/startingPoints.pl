@@ -1,3 +1,10 @@
+:-module(startingPoints,[
+    earliestArrivalTime/2,
+    earliestDepartureTime/2,
+    shortestOperationTime/2,
+    shortestSlackTime/2    
+]).
+
 :- use_module([
     '../vessels.pl'
 ]).

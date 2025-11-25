@@ -4,30 +4,33 @@
     "../../../Utils/Timer.object.pl"
 ]).
 
-mutationValues(L):-
+mutationValues(VL):-
     %gen_list(0.1, 1, 0.1, L1),
     %gen_list(0.01,0.1,0.01, L2),
     %append(L1, L2, L).
-    gen_list(0.01,0.2,0.01, L).
+    gen_list(0,0.21,0.05, L),
+    select(0, L, VL),!.
+    
 
 population_size(L):-
-    gen_list(100, 1001, 100, L).
+    gen_list(10, 50, 10, L).
 
 crossoverValues(L):-
-    gen_list(0.05, 1, 0.05, L).
+    gen_list(0.4, 0.9, 0.1, L).
 
 generations(L):-
     %gen_list(30,120,30,L).
-    L = [500,1000].
+    L = [50,80].
 
 cranesX([
     1
 ]).
 
-
+situations(L):-
+    findall(V, vessels:situation(V,_,_),L).
 
 test:-
-    vessels:situation(s1, Title, VesselList),
+    situations(SituationsL),
     cranesX(CraneXL),
     crossoverValues(CrossL),
     mutationValues(MutationL),
@@ -36,16 +39,17 @@ test:-
 
     format("Title,Vessels,Cranes,Generations,PopulationSize,Crossover,Mutation,BestDelay,TimeMS~n"),!,
 
-    genetic:range(5,RepeatL),
+    genetic:range(2,RepeatL),
 
     findall(_,
         (
-            member(MaxGeneration, GenerationsL),
+            member(Sit, SituationsL),
+            vessels:situation(Sit, Title, VesselList),
             
             length(VesselList, NVessels),
-
+            
             member(NCranes,CraneXL),
-
+            member(MaxGeneration, GenerationsL),
             member(PopSize, PopSizeL),
             member(CrossProb, CrossL),
             member(MutProb, MutationL),
@@ -78,7 +82,7 @@ testsingle(
     reset_timer, start_timer,
     geneticDock:genetic(
         VesselList, NCranes,
-        PopSize, MaxGeneration, 
+        MaxGeneration, PopSize, 
         CrossProb, MutProb,
          _, Delay
     ),
@@ -90,7 +94,7 @@ testsingle(
 
 
 toFile:-
-    get_time(T),format_time(string(Text),"%d-%e-%Y %H-%M",T),
+    get_time(T),format_time(string(Text)," %d-%e-%Y %H-%M",T),
     format(atom(FileName), "reports/Genetic/Genetic~w.csv", [Text]),
     writeln(FileName),
     tell(FileName),

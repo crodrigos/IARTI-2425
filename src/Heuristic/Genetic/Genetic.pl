@@ -26,6 +26,8 @@ crossover_predicate(P):-map:map("gen_crossover_predicate", P).
 
 evaluation_predicate(P):-map:map("gen_evalutation_predicate", P).
 
+last_generations(L):-map:map("gen_last_generations",L).
+:-last_generations([]).
 
 genetic(
         InitialPopulation,
@@ -55,8 +57,9 @@ genetic(
 %     Delay==0,!,Population=Final.
 
 genetic1(P,G,G,P):-!.
-genetic1(P,_,_,P):-
+genetic1(P,_,G,P):-
     [(Fitness,_)|_] = P,
+    %bw(["G: ", G, "| F: ", Fitness,"\n"]),
     Fitness=0, !.
 genetic1(Population, MaxGenerations, CurrentGeneration, Final):-
     
@@ -74,20 +77,29 @@ generateInitialPopulation(InitialPop, InitialPopEval):-
         InitialPopEval).
 
 mutatePopulation(Population, MutatedPop):-
-    findall(M, mutatePopulation1(Population,M), MutatedPop).
+    findall(M,
+        (
+            mutatePopulation1(Population,M)
+        ), 
+        MutatedPop).
 
-mutatePopulation1(Population, (F, MutatedEl)):-
-    select((F, El), Population, _),
+mutatePopulation1(Population, Mutated):-
+    select(El, Population, _), 
+    mutateElement(El,Mutated).
+
+mutateElement((F,El), (MutatedFit, MutatedEl)):-
     random(PROB),
     mutation_probability(MUTATE_PROB),
     (
         ((PROB =< MUTATE_PROB) -> 
             (
-                mutation_predicate(MutatePred),
-                call(MutatePred, El, MutatedEl),!
+                mutation_predicate(MutatePred),!,
+                call(MutatePred, El, MutatedEl),
+                evaluate(MutatedEl, MutatedFit)
             )
         ;
-            MutatedEl = El
+            MutatedEl = El,
+            MutatedFit = F
         )
     ).
 
@@ -105,9 +117,11 @@ genNewPopulation(Population, NewPopulation):-
 
 genNewPopulation1(Population, OUT):-
     
-    tournamentSelect(Population, 3, Parent1),
+    TournamentSize = 4,
+
+    tournamentSelect(Population, TournamentSize, Parent1),
     select(Parent1, Population, PopulationRest),
-    tournamentSelect(PopulationRest, 3, Parent2),
+    tournamentSelect(PopulationRest, TournamentSize, Parent2),
 
     (_, El1) = Parent1,
     (_, El2) = Parent2,
@@ -149,14 +163,12 @@ best_individual([(F1,El1),(F2,El2)|T], Best) :-
 
 evalutateAndTrimPopulation(Population, NewPopulation):-
     population_size(PopulationSize),
+    
+    sort(0, @=<, Population, PopSorted), % @=< para nao eliminar elementos iguais
 
-    sort(Population, PopSorted),
+    listutils:getFirstXOfList(PopulationSize,PopSorted,NewPopulation).
 
-    range(PopulationSize, Ltemp),
-    findall(El,(
-        member(Nth, Ltemp),
-        nth1(Nth, PopSorted, El)
-    ),NewPopulation).
+
 
 evaluate(El, Eval):-
     evaluation_predicate(EvalutationPredicate),

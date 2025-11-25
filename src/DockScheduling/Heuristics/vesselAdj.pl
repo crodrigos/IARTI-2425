@@ -9,7 +9,7 @@
 
 :- use_module([
     '../CraneScheduling.pl',
-    'vars.pl'
+    '../vars.pl'
 ]).
 
 visionRange(N):-map:map("neighbor_range", N).
@@ -22,7 +22,7 @@ adjacentWeighedPermutation(Vessels,NCranes,Perm,W):-
 adjacentWeighedPermutation(Vessels,NCranes,AdjDist,Perm,W):-
     sequenceTemporization(Vessels,NCranes,VesselsSeq),
     
-    neighbourPermutation(Vessels,Range,Perm), %adjacentPermutationDeg
+    neighbourPermutation(Vessels,AdjDist,Perm), %adjacentPermutationDeg
     sequenceTemporization(Perm,NCranes, PermutationSeq),
 
     sumDelays(VesselsSeq,D1),

@@ -1,3 +1,6 @@
+
+:- module(branchAndBound, [branchAndBound/6]).
+
 :- use_module([
     '../../../Utils/Timer.object',
     '../../../Utils/Map.object',
@@ -5,7 +8,7 @@
     '../../../Utils/BetterWrite.pl',
     '../../vessels.pl',
     '../../CraneScheduling.pl',
-    '../vars.pl',
+    '../../vars.pl',
     '../vesselAdj.pl'
 ]).
 
@@ -15,19 +18,19 @@ nCranes(NCranes):-map:map("nCranes", NCranes).
 
 
 
-branchAndBoundExplore(NCranes, VisionRange, Vessels, SSeq, LSeq):-
+branchAndBound(NCranes, VisionRange, Vessels, Depth, Seq, Delay):-
     visionRange(VisionRange),
-    branchAndBoundExplore(NCranes, Vessels, Seq, Delay).
+    branchAndBound(NCranes, Vessels, Depth, Seq, Delay).
 
-branchAndBoundExplore(NCranes, Vessels, SSeq, SDelay):-
+branchAndBound(NCranes, Vessels, Depth, SSeq, SDelay):-
     shortest_delay([],9999999),
     longest_delay([],0),
     medium_delay(0,0,0),
     nPermutations(0),
 
-    nCranes(NCranes),
-    random_permutation(Vessels, VesselsR),!,
-    (branchAndBoundExplore1([(0,[VesselsR])], 30, 0);true),!,
+    nCranes(NCranes),!,
+
+    (branchAndBoundExplore1([(0,[Vessels])], Depth, 0);true),!,
 
     shortest_delay(SSeq, SDelay).
     % longest_delay(LSeq, LDelay),
@@ -68,7 +71,7 @@ branchAndBoundExplore1([(Custo,Caminho)|Outros], MaxDepth, Depth):-
     pruneExcess(TodosOrd, TodosPruned),
 
     D1 is Depth + 1,
-    branchAndBoundExplore1(TodosOrd, MaxDepth, D1).
+    branchAndBoundExplore1(TodosPruned, MaxDepth, D1).
     
 
 compareAll(Vessels):-
@@ -97,48 +100,3 @@ pruneExcess(Full, Pruned) :-
 
     
 
-test(NV, NC, VRange):- visionRange(VRange), test(NV, NC).    
-test(NV, NC):-
-
-    range(NV, NVList),
-
-    nCranes(NC),
-    
-    ProgramTimerID is 0001,
-    reset_timer(ProgramTimerID), start_timer(ProgramTimerID),!,
-
-    ((
-        member(NVessels, NVList),
-        allVessels(NVessels, ListOfVessels),
-        bw("\n", "----------------------"),
-        bw("Number of Vessels: ", NVessels),
-
-        VesselTimerID = "vesselID", reset_timer(VesselTimerID), start_timer(VesselTimerID),
-
-        ((
-            test1(NC,ListOfVessels,Delay),
-            get_elapsed_time(VesselTimerID, Time),
-            bw(["\n\nCalculation Time for ", NVessels, " Vessels (ms): ", Time,"\n"])
-        );true),
-        
-        fail
-        
-    ); true), bw("\n\n").
-
-test1(NC,ListOfVessels,Delay):-
-    range(NC,NCTEMP),!, member(NCranes,NCTEMP),
-
-    CraneTimerID = "CraneTimerID", 
-    reset_timer(CraneTimerID), start_timer(CraneTimerID),
-    
-    format("Cranes: ~|~d~3+ ", [NCranes]),
-    branchAndBoundExplore(NCranes, ListOfVessels,_,Delay),
-    format("; Delay: ~|~d~5+", [Delay]),
-    
-    
-    get_elapsed_time(CraneTimerID, TimeCr),
-    format("; Calc. Time: ~t~d~8| ms~n", [TimeCr]),
-
-    Delay=<0,!.
-
-    

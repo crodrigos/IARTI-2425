@@ -45,7 +45,7 @@ nCranes(NCranes):-map:map("gen_ncranes", NCranes).
 % TODO: Add Generic Goal for Mutation, Crossover and Evaluation
 genetic(
         VesselList, NCranes, 
-        PopulationSize, MaxGenerations, 
+        MaxGenerations, PopulationSize, 
         CrossProb, MutProb, 
         Best, Delay
     ):-

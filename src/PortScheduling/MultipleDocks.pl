@@ -1,148 +1,110 @@
-:-['Schedule.object.pl'].
-:-['ListUtils.pl'].
-:-['vessels.pl']. % Example Vessels
-:-['scheduling_vessels_1.pl']. % Given Code
-:-['BulkWrite.pl'].
-:-['Counter.object.pl'].
+:- use_module([
+    '../Utils/Timer.object',
+    '../Utils/Map.object',
+    '../Utils/ListUtils.pl',
+    '../Utils/BetterWrite.pl',
+    '../DockScheduling/CraneScheduling.pl',
+    '../DockScheduling/vessels.pl',
+    '../DockScheduling/Heuristics/vesselAdj.pl'
+]).
 
-:- autoload(library(lists), [append/3, member/2, last/2]).
 
-max_docks(1). % FIXME: SPRINT B só considera 1 doca.
+%! Predicado para transformar list de barcos numa possivel solução
+% getPortSolution(-VesselList, -NDocks, +PortSchedule):-
+splitVesselListInDocks(V, [ND], [(ND,V)]):-!.
+splitVesselListInDocks(VesselList, [NDocks|NDT], [(NDocks,V1)|Rest]):-
+    append(V1, V2, VesselList),
+    splitVesselListInDocks(V2, NDT, Rest).
 
-% ---- PREDICADOS DINAMICOS
+splitVesselListInDocksRand(V, [ND], [(ND,V)]):-!.
+splitVesselListInDocksRand(VesselList, [NDocks|NDT], [(NDocks,V1)|Rest]):-
+    random_subseq(VesselList,V1,V2),
+    splitVesselListInDocksRand(V2, NDT, Rest).
 
-% Current Shortest Schedule and Interval
-% shortest_delay(Sequence, Delay)
-:- dynamic shortest_delay/2.
-shortest_delay(_, 999999).
-setShortestDelay(NewSchedule, NewDelay):-
-    retract(shortest_delay(_,_)),
-    asserta(shortest_delay(NewSchedule, NewDelay)).
 
-% Current Shortest Time for Schedule
-:- dynamic shortest_time/1.
-shortest_time(0).
-setShortestTime(NewTime):-
-    retract(shortest_time(_)),
-    asserta(shortest_time(NewTime)).
 
-% Interval Size to be analyzed
-% Default Value 167, 24*7 (a week)
-:- dynamic max_time/1.
-max_time(167).
-setMaxTime(NewValue):-
-    retract(max_time(_)),
-    asserta(max_time(NewValue)).
+% Make sequence for each dock
+scheduleTemporization([], []):-!.
+scheduleTemporization([(ND,VL)|T], [Seq|TSeq]):-
+    sequenceTemporization(VL, ND, Seq),
+    scheduleTemporization(T,TSeq).
 
-% Calculation time statistics
-:- dynamic calculation_time/2.
-calculation_time(0, 0).
-setCalculationTime(TimeTaken, NCalculations):-
-    retract(calculation_time(_,_)),
-    asserta(calculation_time(TimeTaken, NCalculations)).
+% Calculate delay for each dock and choose the worst one
+scheduleDelay(ScheduleSequence, Delays, WorstDelay):-
+    scheduleDelay(ScheduleSequence, Delays),
+    max_list(Delays, WorstDelay).
+scheduleDelay([], []):-!.
+scheduleDelay([Seq|T], [D| DT]):-
+    sumDelays(Seq, D),
+    scheduleDelay(T, DT).
+    
+scheduleTemporizationAndDelay(Sch, Seq, Delays, Worst):-
+    scheduleTemporization(Sch, Seq),
+    scheduleDelay(Seq, Delays, Worst).
 
-% ============================================================
-% PROGRAMA
-% ============================================================
 
-run:-
-    obtainShortestSequence(ShortestSchedule, ShortestDelay, ShortestTime),
-    writeSchedule(ShortestSchedule, ShortestDelay, ShortestTime).
 
-obtainShortestSequence(ShortestSchedule, ShortestDelay, ShortestTime):-
-    obtainShortestSequence1,
-    shortest_delay(ShortestSchedule, ShortestDelay),
-    shortest_time(ShortestTime).
 
-obtainShortestSequence1:-
-    max_docks(MaxDocks), % Get Max Docks
-    range(MaxDocks, RL),!, % Gen List of [1,2,...,MaxDocks]
 
-    member(NDocks, RL), % Get Value from RL
-    bw(["\nCalculating for ", NDocks, " Dock(s)\n\n"]),
 
-    reset_timer, % Statistics
-    start_timer, % Statistics
+neighourSchedule(Schedule, Distance, Neighbour):-
+    findall(
+        N,
+        (
+            neighourSchedule1(Schedule, Distance, [Schedule], N);
+            moveVesselDockToDock(Schedule, N)
+        ), 
+        AllNeighbours
+    ),
+    member(Neighbour, AllNeighbours).
 
-    reset_count,
-    start_count,
-    (obtainShortestSequenceForNDocks(NDocks); true),
-
-    get_elapsed_time(T), % Statistics
-    bw("Time Taken (ms): ", T), % Statistics
-    get_count(C),
-    bw("Iteratons: ", C),
-
-    shortest_delay(Schedule,_),
-    \+ checkScheduleExtendsMaxTime(Schedule).
-
-% obtainShortestSequence(+NDocks)
-% Testar todas os possiveis Horarios para um Num Especifico de DOCAS.
-% O Valor é colocado em shortest_delay(-Schedule, Delay)
-obtainShortestSequenceForNDocks(NDocks):-
-    allVessels(AllVessels),
-    createOrderedVesselMatrix(AllVessels, NDocks, VesselMat), % Backtracking here
-    createMultipleDockSchedule(VesselMat, AllDockSchedule),
-    checkMultipleDockScheduleDelay(AllDockSchedule, Delay),
-    compareShortestScheduleDelay(AllDockSchedule, Delay),
-    fail.
-
-compareShortestScheduleDelay(AllDockSchedule, Delay):-
-    shortest_delay(_, LowestDelay),
-    ((Delay =< LowestDelay, !, setShortestDelay(AllDockSchedule, Delay)); true).
-
-checkScheduleExtendsMaxTime(Schedule):-
-    max_time(MaxTimeAllowed),
-    checkScheduleExtendsMaxTime1(Schedule, MaxScheduleTime),
-    setShortestTime(MaxScheduleTime),
-    ((MaxScheduleTime > MaxTimeAllowed, fail)).
-
-checkScheduleExtendsMaxTime1([], 0).
-checkScheduleExtendsMaxTime1([DockSchedule|Schedule], NewMaxScheduleTime):-
-    checkScheduleExtendsMaxTime1(Schedule, MaxScheduleTime),
-    last(DockSchedule, (Vessel, _, TimeEndLoading)),
+neighourSchedule1(_, 0,_, _):-!,fail.
+neighourSchedule1(SCH, Depth, Visited, Neighbour):-
+    Depth1 is Depth-1,
     (
-        (TimeEndLoading > MaxScheduleTime, !, NewMaxScheduleTime is TimeEndLoading)
-        ; NewMaxScheduleTime is MaxScheduleTime
+        neighourScheduleDock(SCH, Neighbour);
+        neighourSchedule1(Neighbour, Depth1, [SCH|Visited], Neighbour)
     ).
+    
+neighourScheduleDock([],[]):-!.
+neighourScheduleDock([(NC,LV)|Rest], [(NC,LVPerm)|RestPerm]):-!,
+    neighbourPermutation(LV,1,LVPerm),
+    neighourScheduleDock(Rest,RestPerm).
 
-% ============================================================
-% VESSEL MATRIX AND SCHEDULING
-% ============================================================
+moveVesselDockToDock(Schedule, Result) :-
+    nth0(SrcIndex, Schedule, (ValS, ListS)),
+    nth0(DstIndex, Schedule, (ValD, ListD)),
+    SrcIndex \= DstIndex, ListS\=[],                   
 
-%
-% [
-%     [vessel1, vessel2], % Dock1
-%     [vessel3], % Dock2
-%     [vessel4], % Dock3
-% ]
-createOrderedVesselMatrix(Vessels, NDocks, VesselMatrix):-
-    createdOrderedVesselMatrix1(Vessels, NDocks, 1, VesselMatrix).
+    select(Elem, ListS, NewListS),
+    NewListD = [Elem | ListD],
 
-% FIXME: VERIFICAR SE EXISTEM DUPLICADOS NO findall
-createdOrderedVesselMatrix1(Vessels, NDocks, NDocks, [Vessels]).
-createdOrderedVesselMatrix1(Vessels, NDocks, Depth, [Head|Rest]) :-
-    length(Vessels, NVessels),
-    NDocks > NVessels,
-    Depth < NDocks,
-    append(Head, Tail, Vessels),
-    Depth1 is Depth + 1,
-    createdOrderedVesselMatrix1(Tail, NDocks, Depth1, Rest).
-createdOrderedVesselMatrix1(Vessels, NDocks, Depth, [Head|Rest]) :-
-    Depth < NDocks,
-    append(Head, Tail, Vessels),
-    Head \= [],
-    Tail \= [],
-    Depth1 is Depth + 1,
-    createdOrderedVesselMatrix1(Tail, NDocks, Depth1, Rest).
+    replace0th(Schedule, (ValS,NewListS), SrcIndex, Temp),
+    replace0th(Temp, (ValD, NewListD), DstIndex, Result).
 
-createMultipleDockSchedule([], []).
-createMultipleDockSchedule([OrderedVesselDock|VesselMatrix], [ScheduleOfDock|Schedule]):-
-    createMultipleDockSchedule(VesselMatrix, Schedule),
-    sequence_temporization(OrderedVesselDock, ScheduleOfDock).
+replace0th(List, NewVal, Index, Result):-
+    replace0th1(List, NewVal, Index, 0, Result).
+replace0th1([L|T], NewVal, Target, Target, [NewVal|T]):-!.
+replace0th1([L|T], NewVal, Target, Pos, [L|Result]):-
+    Pos1 is Pos+1,
+    replace0th1(T, NewVal, Target, Pos1, Result).
 
-checkMultipleDockScheduleDelay([], 0).
-checkMultipleDockScheduleDelay([DockSchedule|RestDockSchedule], NewDelay):-
-    checkMultipleDockScheduleDelay(RestDockSchedule, CurrentDelay),
-    sum_delays(DockSchedule, Delay),
-    NewDelay is Delay + CurrentDelay.
+
+testNS:-
+    situation(s1,_,LV),
+    Docks=[1,2,3],
+    splitVesselListInDocks(LV, Docks, Solution),
+    findall(SL,(
+        neighourSchedule(Solution,1, SL),
+        writeln(SL)
+    ), ALL),nl,
+    writeln(Solution),
+    length(ALL, L),
+    bw("Neighbours: ", L).
+
+
+test(Solution, Seq, Delays, Worst):-
+    situation(s1,_,LV),
+    Docks=[1,1,1],
+    splitVesselListInDocks(LV, Docks, Solution),
+    scheduleTemporizationAndDelay(Solution, Seq, Delays, Worst).

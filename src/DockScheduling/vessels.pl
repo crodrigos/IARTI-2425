@@ -63,9 +63,7 @@ situation(s2_SOT, "Single Perfect Solution - SOT", L):-
     situation(s2, _, LV),
     shortestOperationTime(LV, L).
 
-situation(s3, "Big Direct", L1):-
-    L1 = ["s3_Zeus", "s3_Poseidon", "s3_Graca", "s3_Marques", "s3_Onda", "s3_Cartografo", "s3_Dona Maria", "s3_Caçador", "s3_Monstro", "s3_V1", "s3_V2", "s3_V3", "s3_V4"].
-    random_permutation(L1,L).
+situation(s3, "Big Direct", ["s3_Zeus", "s3_Poseidon", "s3_Graca", "s3_Marques", "s3_Onda", "s3_Cartografo", "s3_Dona Maria", "s3_Caçador", "s3_Monstro", "s3_V1", "s3_V2", "s3_V3", "s3_V4"]).
 
 
 %! vessel (-Ref, -ArrivingTime, -DepartureTime, -UnloadingTime, -LoadingTime)

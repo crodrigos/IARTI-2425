@@ -35,15 +35,10 @@ matrix_empty([[]|Rows]) :-
 getMin([], _, []) :- fail.   % no rows at all → no minimum
 
 getMin(Matrix, Min, RestMatrix) :-
-    % Extract (Head, Tail, RestRows) for every non-empty row
     findall((H,T), (member(Row, Matrix), Row = [H|T]), Pairs),
-
-    % If no rows had heads, we’re done
     Pairs \= [],
-    % Find the minimal head
     findall(H, member((H,_), Pairs), Heads),
     min_list(Heads, Min),
-    % Remove Min from its row and reconstruct the matrix
     rebuild(Matrix, Min, RestMatrix).
 
 rebuild([], _, []).

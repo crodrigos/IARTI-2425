@@ -34,8 +34,8 @@ aStar1(
     append(Rest, New, All),
     sort(All, AllSorted),
 
-    % AllSorted = [(E,C,P)|_],
-    % write("Cost: "), writeln(C),
+    AllSorted = [(E,C,P)|_],
+    write("EstCost: "), writeln(E),
 
     D1 is Generations+1,
     aStar1(NextPredicate, EstimationPredicate, AllSorted, MaxGenerations, D1, Return).

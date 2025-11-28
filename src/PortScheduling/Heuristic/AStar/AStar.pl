@@ -7,13 +7,14 @@
 
 next(Schedule, Next, W):-
     neighbourSchedule(Schedule,1,Next),
-    scheduleTemporizationAndDelay(Schedule, Seq1, Delay1, Worst1),
+    scheduleTemporizçationAndDelay(Schedule, Seq1, Delay1, Worst1),
     scheduleTemporizationAndDelay(Next, Seq2, Delay2, Worst2),
     W is Worst2-Worst1.
 
 % FIXME: AStar está a agir como Branch and bound pois h' é 0
 estimate(Schedule, W):- 
-    W is 0.
+    scheduleTemporizationAndDelay(Schedule,_,DockDelayL,_),
+    sum_list(DockDelayL, W).
 
 aStarImpl(VL, DockL, MaxGens, Best, DockDelayL, Delay):-
     splitVesselListInDocksRand(VL,DockL,Schedule),
@@ -24,8 +25,7 @@ aStarImpl(VL, DockL, MaxGens, Best, DockDelayL, Delay):-
     scheduleTemporizationAndDelay(Best, _, DockDelayL, Delay).
 
 aStarBest(VL, DockL, MaxGens, Best, Delay):-
-    findall(D, increaseDocks(DockL,D),MultDockLT),
-    reverse(MultDockLT, MultDockL),
+    findall(D, increaseDocks(DockL,D),MultDockL),
     ((
         member(DL,MultDockL),
         write("DockList: "), write(DL),
@@ -40,28 +40,25 @@ increaseDocks(DockL, Result):-
 
     length(IncDocks, Len),
     maplist(=(1), IncDocks),
-
-    increaseDocks1(IncDocks, DockL, Result).
+    ((Result=IncDocks);increaseDocks1(IncDocks, DockL, Result)).
 
 increaseDocks1(Base, Ref, Result):-
-    subtract(Ref, Base, SubL),
-    sum_list(SubL,SubV),
-
-    ((
-        SubV>0,
-        increaseDocks2(Base,Ref,Res),
-        increaseDocks1(Res,Ref,Result)
-    ); Base = Result).
+    findall(Res,increaseDocks2(Base,Ref,Res),RTemp),
+    sort(RTemp, Results),
+    (
+        member(Result, Results)
+    ; (
+        last(Results, LastRes),
+        increaseDocks1(LastRes, Ref, Result)
+    )).
     
-
+increaseDocks2(Base, Base, []):-!,fail.
 increaseDocks2([],[],[]).
 increaseDocks2([Base|TBase],[Ref|TRef],[Result|TResult]):-
-    (
-        (
-            Ref>Base,!,
-            Result is Base+1
-        ); (Result = Base)
-    ),    
+    Ref>Base,!,
+    Result is Base+1,
+    ((TResult=TBase);increaseDocks2(TBase, TRef, TResult)).
+increaseDocks2([Base|TBase],[Ref|TRef],[Base|TResult]):-
     increaseDocks2(TBase, TRef, TResult).
 
 subtract([],[],[]).

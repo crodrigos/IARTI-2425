@@ -28,7 +28,7 @@ splitVesselListInDocks(VesselList, [NDocks|NDT], [(NDocks,V1)|Rest]):-
 
 splitVesselListInDocksRand(V, [ND], [(ND,V)]):-!.
 splitVesselListInDocksRand(VesselList, [NDocks|NDT], [(NDocks,V1)|Rest]):-
-    random_subseq(VesselList,V1,V2),
+    random_subseq(VesselList,V1,V2),!,
     splitVesselListInDocksRand(V2, NDT, Rest).
 
 

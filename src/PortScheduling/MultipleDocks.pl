@@ -1,3 +1,13 @@
+:- module(dockScheduling, [
+    splitVesselListInDocks/3,
+    splitVesselListInDocksRand/3,
+    scheduleTemporization/2, 
+    scheduleDelay/3, 
+    scheduleDelay/2, 
+    scheduleTemporizationAndDelay/4,
+    neighbourSchedule/3
+]).
+
 :- use_module([
     '../Utils/Timer.object',
     '../Utils/Map.object',
@@ -47,29 +57,29 @@ scheduleTemporizationAndDelay(Sch, Seq, Delays, Worst):-
 
 
 
-neighourSchedule(Schedule, Distance, Neighbour):-
+neighbourSchedule(Schedule, Distance, Neighbour):-
     findall(
         N,
         (
-            neighourSchedule1(Schedule, Distance, [Schedule], N);
+            neighbourSchedule1(Schedule, Distance, [Schedule], N);
             moveVesselDockToDock(Schedule, N)
         ), 
         AllNeighbours
     ),
     member(Neighbour, AllNeighbours).
 
-neighourSchedule1(_, 0,_, _):-!,fail.
-neighourSchedule1(SCH, Depth, Visited, Neighbour):-
+neighbourSchedule1(_, 0,_, _):-!,fail.
+neighbourSchedule1(SCH, Depth, Visited, Neighbour):-
     Depth1 is Depth-1,
     (
-        neighourScheduleDock(SCH, Neighbour);
-        neighourSchedule1(Neighbour, Depth1, [SCH|Visited], Neighbour)
+        neighbourScheduleDock(SCH, Neighbour);
+        neighbourSchedule1(Neighbour, Depth1, [SCH|Visited], Neighbour)
     ).
     
-neighourScheduleDock([],[]):-!.
-neighourScheduleDock([(NC,LV)|Rest], [(NC,LVPerm)|RestPerm]):-!,
+neighbourScheduleDock([],[]):-!.
+neighbourScheduleDock([(NC,LV)|Rest], [(NC,LVPerm)|RestPerm]):-!,
     neighbourPermutation(LV,1,LVPerm),
-    neighourScheduleDock(Rest,RestPerm).
+    neighbourScheduleDock(Rest,RestPerm).
 
 moveVesselDockToDock(Schedule, Result) :-
     nth0(SrcIndex, Schedule, (ValS, ListS)),
@@ -95,7 +105,7 @@ testNS:-
     Docks=[1,2,3],
     splitVesselListInDocks(LV, Docks, Solution),
     findall(SL,(
-        neighourSchedule(Solution,1, SL),
+        neighbourSchedule(Solution,1, SL),
         writeln(SL)
     ), ALL),nl,
     writeln(Solution),

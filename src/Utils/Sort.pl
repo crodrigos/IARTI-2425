@@ -60,7 +60,24 @@ mergeSort(L,D,R):-
         member(Sublist, SublistL),
         mergeSort(Sublist,D, ML)
     ), RetSubList),
-    reorderlists(RetSubList,R).
+    merge(RetSubList,R).
+
+merge([], []).
+merge([L1], [L1]).
+merge([L1,L2|T], S):-
+    merge(L1,L2,S1),
+    merge(T, S2),
+    merge(S1,S2, S).
+
+merge([], [S | Sorted], [S | Sorted]).
+merge([S | Sorted], [], [S | Sorted]).
+merge([E | Evens], [O | Odds], Merged) :-
+    E < O ->
+        merge(Evens, [O | Odds], SubMerged),
+        Merged = [E | SubMerged]
+    ;
+        merge([E | Evens], Odds, SubMerged),
+        Merged = [O | SubMerged].
 
 mergeSort(L,R):-
     mergeSort(L,2,R).
@@ -113,12 +130,19 @@ test(mergesort):-
 
         member(D, DL),
 
+        bw("Default Sort"),
+        reset_timer, start_timer,
+        sort(LR, R),
+        get_elapsed_time(T1),
+        bw("Time: ", T1), nl,
+
+        bw("Custom Sort"),
         reset_timer, start_timer,
         mergeSort(LR, D, R),
-        get_elapsed_time(T),
-
+        get_elapsed_time(T2),
         bw("Divs: ", D),
-        bw("Time: ", T), nl
+        bw("Time: ", T2), nl, nl, nl, nl,
+        fail
     ), _).
     
 test(mergethread):-

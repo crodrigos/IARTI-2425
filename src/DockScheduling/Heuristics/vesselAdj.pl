@@ -29,6 +29,8 @@ adjacentWeighedPermutation(Vessels,NCranes,AdjDist,Perm,W):-
     sumDelays(PermutationSeq,D2),
     W is D2-D1.
 
+neighbourPermutation(L, 1, P):-
+    adjacentPermutation(L,P).
 neighbourPermutation(List,MaxDistance,Permutation):-
     neighbourPermutation1(MaxDistance,0,[List],PermutationList),
     delete(PermutationList, List, PermList),!,
@@ -59,6 +61,7 @@ adjacentPermutation([X,Y|T], [Y,X|T]).
 adjacentPermutation([H|T], [H|R]):-
     adjacentPermutation(T, R).
 adjacentPermutation([V], [V]).
+adjacentPermutation([],[]).
 
 
     

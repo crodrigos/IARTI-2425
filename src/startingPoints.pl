@@ -6,7 +6,7 @@
 ]).
 
 :- use_module([
-    '../vessels.pl'
+    'vessels.pl'
 ]).
 
 all(LV,EAT,EDT,SOT,SST):-

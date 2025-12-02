@@ -14,8 +14,8 @@
     '../Utils/ListUtils.pl',
     '../Utils/BetterWrite.pl',
     '../DockScheduling/CraneScheduling.pl',
-    '../DockScheduling/vessels.pl',
-    '../DockScheduling/Heuristics/vesselAdj.pl'
+    '../DockScheduling/Heuristics/vesselAdj.pl',
+    '../vessels.pl'
 ]).
 
 
@@ -28,7 +28,8 @@ splitVesselListInDocks(VesselList, [NDocks|NDT], [(NDocks,V1)|Rest]):-
 
 splitVesselListInDocksRand(V, [ND], [(ND,V)]):-!.
 splitVesselListInDocksRand(VesselList, [NDocks|NDT], [(NDocks,V1)|Rest]):-
-    random_subseq(VesselList,V1,V2),!,
+    random_permutation(VesselList, VL1),
+    random_subseq(VL1,V1,V2),!,
     splitVesselListInDocksRand(V2, NDT, Rest).
 
 

@@ -2,7 +2,8 @@
 :- module(listutils, [
     range/2,
     createUniqueSublist/3,
-    getFirstXOfList/3
+    getFirstXOfList/3,
+    getFirstXOfList/4
 ]).
 
 range(N,Out):-
@@ -94,10 +95,11 @@ subset_range(List, Start, End, Sub) :-
     length(Sub, Len),
     append(Sub, _, Rest).
 
-getFirstXOfList(_, [], []) :- !.
-getFirstXOfList(0, _, []) :- !.
-getFirstXOfList(X, [H|T], [H|R]) :-
+getFirstXOfList(X,L,R):- getFirstXOfList(X,L,R,_).
+getFirstXOfList(_, [], [], []) :- !.
+getFirstXOfList(0, L, [], L) :- !.
+getFirstXOfList(X, [H|T], [H|R], Rest) :-
     X > 0,
     X1 is X - 1,
-    getFirstXOfList(X1, T, R).
+    getFirstXOfList(X1, T, R, Rest).
 

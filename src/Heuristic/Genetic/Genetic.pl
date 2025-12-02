@@ -59,7 +59,7 @@ genetic(
 genetic1(P,G,G,P):-!.
 genetic1(P,_,G,P):-
     [(Fitness,_)|_] = P,
-    %bw(["G: ", G, "| F: ", Fitness,"\n"]),
+    bw(["G: ", G, "| F: ", Fitness,"\n"]),
     Fitness=0, !.
 genetic1(Population, MaxGenerations, CurrentGeneration, Final):-
     
@@ -130,8 +130,8 @@ genNewPopulation1(Population, OUT):-
     crossover_probability(CROSS_PROB),
 
     ((PROB =< CROSS_PROB) ->
-        crossover_predicate(CROSSPRED),
-        call(CROSSPRED, El1,El2,F1,F2),!,
+        crossover_predicate(CrossoverPredicate),
+        call(CrossoverPredicate, El1,El2,F1,F2),!,
 
         evaluate(F1, Eval1),
         evaluate(F2, Eval2),

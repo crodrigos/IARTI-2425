@@ -7,7 +7,7 @@
 
 next(Schedule, Next, W):-
     neighbourSchedule(Schedule,1,Next),
-    scheduleTemporizçationAndDelay(Schedule, Seq1, Delay1, Worst1),
+    scheduleTemporizationAndDelay(Schedule, Seq1, Delay1, Worst1),
     scheduleTemporizationAndDelay(Next, Seq2, Delay2, Worst2),
     W is Worst2-Worst1.
 

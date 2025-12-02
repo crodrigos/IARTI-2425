@@ -10,7 +10,7 @@
     situation/3
 ]).
 
-:- use_module(["Heuristics/startingPoints.pl"]).
+:- use_module(["startingPoints.pl"]).
 
 :- dynamic vessel/5.
 

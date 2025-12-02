@@ -14,8 +14,8 @@
     '../Utils/ListUtils.pl',
     '../Utils/BetterWrite.pl',
     '../DockScheduling/CraneScheduling.pl',
-    '../DockScheduling/vessels.pl',
-    '../DockScheduling/Heuristics/vesselAdj.pl'
+    '../DockScheduling/Heuristics/vesselAdj.pl',
+    '../vessels.pl'
 ]).
 
 

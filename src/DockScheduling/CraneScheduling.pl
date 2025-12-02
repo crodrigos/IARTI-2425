@@ -9,7 +9,7 @@
     '../Utils/Map.object',
     '../Utils/ListUtils.pl',
     '../Utils/BetterWrite.pl',
-    'vessels.pl'
+    '../vessels.pl'
 ]).
 
 

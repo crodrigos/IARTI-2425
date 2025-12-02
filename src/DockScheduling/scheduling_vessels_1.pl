@@ -3,7 +3,7 @@
 % First support for IARTI project 2025/2026
 % Scheduling Vessels Unload/Load
 
-:-use_module('vessels').
+:-use_module(['../vessels']).
 
 :-dynamic shortest_delay/2.
 

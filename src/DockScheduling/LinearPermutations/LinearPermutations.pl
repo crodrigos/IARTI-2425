@@ -9,7 +9,8 @@
     '../../Utils/BetterWrite.pl',
     '../vessels.pl',
     '../CraneScheduling.pl',
-    '../vars.pl'
+    '../vars.pl',
+    '../../vessels.pl'
 ]).
 
 % Vars
@@ -77,9 +78,9 @@ obtainAllSequencesWithDelay(ListOfVessels, NCranes, RSorted):-
 %     ); true).
 
 
-getSchedule:-
-    allVessels(5, VL),
-    obtainShortestSequence(VL, 1, Seq, D),
-    bw("Vessels: ", VL),
-    bw("Delay: ", D),
-    craneScheduling:writeDockDailySchedules(Seq).
+% getSchedule:-
+%     allVessels(5, VL),
+%     obtainShortestSequence(VL, 1, Seq, D),
+%     bw("Vessels: ", VL),
+%     bw("Delay: ", D),
+%     craneScheduling:writeDockDailySchedules(Seq).

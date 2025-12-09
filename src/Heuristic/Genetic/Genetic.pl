@@ -6,7 +6,8 @@
     '../../Utils/Map.object.pl',
     '../../Utils/ListUtils.pl',
     '../../Utils/BetterWrite.pl',
-    '../../Utils/Queue.object.pl'
+    '../../Utils/Queue.object.pl',
+    '../../Utils/Math.statistic.pl'
 ]).
 
 population_size(N):-map:map("gen_popsize", N).
@@ -32,10 +33,10 @@ last_generations(L):-map:map("gen_last_generations",L).
 
 
 previous_generations_queue(L):- map:map("gen_previous_gen_queue", L).
-previous_generations_queue([]).
+:-previous_generations_queue([]).
 
 previous_generations_length(Length):- map:map("gen_previous_gen_length", Length).
-previous_generations_length(0).
+:-previous_generations_length(100).
 
 add_previous_generations(Val):-
     previous_generations_length(Length),
@@ -50,7 +51,7 @@ add_previous_generations(Val):-
 
 
 stagnation_margin(Val):-map:map("gen_stagnation_margin",Val).
-:-stagnation_margin(0).
+:-stagnation_margin(10).
 
 
 
@@ -81,11 +82,31 @@ genetic(
 %     vesselSequenceDelay(Best, NCranes, _, Delay),
 %     Delay==0,!,Population=Final.
 
+% Predicado para imprimir
+genetic1([(Fitness,_)|_],_,G,_):- 
+    write('\33\[2J'), % Clear Screen
+    bw("Generation: ", G),
+    bw("F: ", Fitness),fail.
+
+% Numero Max de Gerações atingidas
 genetic1(P,G,G,P):-!.
+
+% Fitness Ideal Atingida + Guardar um melhor
 genetic1(P,_,G,P):-
     [(Fitness,_)|_] = P,
-    bw(["G: ", G, "| F: ", Fitness,"\n"]),
     Fitness=0, !.
+
+% Valores estagnaram
+genetic1(P,_,_,P):- 
+    stagnation_margin(StagnationMargin),
+
+    calculateStagnation(P, Stag),
+    bw("Standard Deviation: ", Stag),
+
+    Stag=<StagnationMargin,!,
+    bw(["FINISHED: Fitness stagnated early", "\n"]).
+
+
 genetic1(Population, MaxGenerations, CurrentGeneration, Final):-
     
     genNewPopulation(Population, NewPopulation),
@@ -100,6 +121,27 @@ generateInitialPopulation(InitialPop, InitialPopEval):-
     findall((Eval,El), 
         (member(El,InitialPop), evaluate(El, Eval)),
         InitialPopEval).
+
+
+
+
+calculateStagnation(Population, Margin):-
+    [(F,_)|_] = Population,
+    add_previous_generations(F),
+
+    % Verificar estagnação quando pelo menos PrevGensMaxLength gerações passaram para evitar valores não desejados
+    previous_generations_queue(PreviousGensFitness),
+    length(PreviousGensFitness, CurrLength),
+    previous_generations_length(PrevGensMaxLength),
+
+    (   CurrLength < PrevGensMaxLength ->  
+        Margin = 9999999
+    ;   
+        standard_deviation(PreviousGensFitness, Std),
+        Margin = Std
+    ).
+
+
 
 mutatePopulation(Population, MutatedPop):-
     findall(M,
@@ -127,6 +169,10 @@ mutateElement((F,El), (MutatedFit, MutatedEl)):-
             MutatedFit = F
         )
     ).
+
+
+
+
 
 genNewPopulation(Population, NewPopulation):-
     population_size(PSize),

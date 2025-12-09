@@ -11,6 +11,9 @@
 ]).
 
 :- use_module(["startingPoints.pl"]).
+:- use_module('src/startingPoints').
+:- use_module(library(lists)).
+:- use_module(library(random)).
 
 :- dynamic vessel/5.
 
@@ -23,17 +26,17 @@ allVessels(N, Vessels):-
     allVessels(VL),
     findall(E, (nth1(I,VL,E), I =< N), Vessels).
 
-allVessels(Vessels):- 
+allVessels(Vessels):-
 	findall(X, vessel(X,_,_,_,_), Vessels).
 
 allVesselsRandom(N, Vessels):-
     allVessels(VL),
     random_permutation(VL, Perm),
     findall(E, (nth1(I,Perm,E), I =< N), Vessels).
-    
 
-situation(s1, 
-    "Varied and real impossible solution", 
+
+situation(s1,
+    "Varied and real impossible solution",
     ["s1_Zeus", "s1_Poseidon", "s1_Graca", "s1_Marques", "s1_Onda", "s1_Cartografo", "s1_Dona Maria", "s1_Cacador", "s1_marenostrum", "s1_nautilus", "s1_floating", "s1_atlantis", "s1_odyssey", "s1_triton", "s1_neptune", "s1_aquarius", "s1_aurora", "s1_chronos", "s1_argo", "s1_icarus", "s1_titan", "s1_leviathan", "s1_hydra", "s1_hermes", "s1_phoenix", "s1_selene"]
 ). % Best Delay 0
 
@@ -49,7 +52,7 @@ situation(s1_SOT, "Varied and real impossible solution - SOT", L):-
 
 
 situation(
-    s2, 
+    s2,
     "Single Perfect Solution",   ["s2_Dona Maria", "s2_Marques", "s2_Poseidon", "s2_Onda", "s2_Caçador", "s2_Zeus", "s2_Graca", "s2_Cartografo"]
 ). % BEST DELAY 183
 

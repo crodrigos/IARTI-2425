@@ -5,7 +5,8 @@
     '../../Utils/Timer.object.pl',
     '../../Utils/Map.object.pl',
     '../../Utils/ListUtils.pl',
-    '../../Utils/BetterWrite.pl'
+    '../../Utils/BetterWrite.pl',
+    '../../Utils/Queue.object.pl'
 ]).
 
 population_size(N):-map:map("gen_popsize", N).
@@ -28,6 +29,30 @@ evaluation_predicate(P):-map:map("gen_evalutation_predicate", P).
 
 last_generations(L):-map:map("gen_last_generations",L).
 :-last_generations([]).
+
+
+previous_generations_queue(L):- map:map("gen_previous_gen_queue", L).
+previous_generations_queue([]).
+
+previous_generations_length(Length):- map:map("gen_previous_gen_length", Length).
+previous_generations_length(0).
+
+add_previous_generations(Val):-
+    previous_generations_length(Length),
+    previous_generations_queue(PrevGens),
+
+    queue_push(PrevGens, Val, GensTemp),
+
+    length(GensTemp, CurrLength),
+    ((CurrLength>Length,!,queue_pop(GensTemp,_,NewPrevGens));NewPrevGens=GensTemp),
+
+    previous_generations_queue(NewPrevGens).
+
+
+stagnation_margin(Val):-map:map("gen_stagnation_margin",Val).
+:-stagnation_margin(0).
+
+
 
 genetic(
         InitialPopulation,

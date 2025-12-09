@@ -34,7 +34,7 @@ allVesselsRandom(N, Vessels):-
 
 situation(s1, 
     "Varied and real impossible solution", 
-    ["s1_Zeus", "s1_Poseidon", "s1_Graca", "s1_Marques", "s1_Onda", "s1_Cartografo", "s1_Dona Maria", "s1_Caçador"]
+    ["s1_Zeus", "s1_Poseidon", "s1_Graca", "s1_Marques", "s1_Onda", "s1_Cartografo", "s1_Dona Maria", "s1_Cacador", "s1_marenostrum", "s1_nautilus", "s1_floating", "s1_atlantis", "s1_odyssey", "s1_triton", "s1_neptune", "s1_aquarius", "s1_aurora", "s1_chronos", "s1_argo", "s1_icarus", "s1_titan", "s1_leviathan", "s1_hydra", "s1_hermes", "s1_phoenix", "s1_selene"]
 ). % Best Delay 0
 
 situation(s1_EAT, "Varied and real impossible solution - EAT", L):-
@@ -74,7 +74,26 @@ vessel("s1_Marques",10,30,0,8).
 vessel("s1_Onda",36,70,12,0).
 vessel("s1_Cartografo",15,55,8,10).
 vessel("s1_Dona Maria",28,65,7,9).
-vessel("s1_Caçador",45,80,6,11).
+vessel("s1_Cacador",45,80,6,11).
+vessel("s1_marenostrum",8,50,8,14).
+vessel("s1_nautilus",9,45,6,12).
+vessel("s1_floating",12,60,9,10).
+vessel("s1_atlantis",14,70,11,11).
+vessel("s1_odyssey",15,75,8,9).
+vessel("s1_triton",18,80,9,13).
+vessel("s1_neptune",20,85,10,10).
+vessel("s1_aquarius",22,90,7,8).
+vessel("s1_aurora",25,88,6,9).
+vessel("s1_chronos",26,95,10,12).
+vessel("s1_argo",27,92,11,10).
+vessel("s1_icarus",30,100,12,12).
+vessel("s1_titan",32,102,13,11).
+vessel("s1_leviathan",35,110,10,10).
+vessel("s1_hydra",38,112,8,14).
+vessel("s1_hermes",40,115,9,13).
+vessel("s1_phoenix",42,118,10,10).
+vessel("s1_selene",45,120,7,9).
+
 
 % Situation 2
 vessel("s2_Zeus",1,10,4,4).

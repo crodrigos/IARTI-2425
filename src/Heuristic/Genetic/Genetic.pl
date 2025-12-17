@@ -51,8 +51,7 @@ add_previous_generations(Val):-
 
 
 stagnation_margin(Val):-map:map("gen_stagnation_margin",Val).
-:-stagnation_margin(10).
-
+:-stagnation_margin(1).
 
 
 genetic(
@@ -84,7 +83,7 @@ genetic(
 
 % Predicado para imprimir
 genetic1([(Fitness,_)|_],_,G,_):- 
-    write('\33\[2J'), % Clear Screen
+    write('\n\33\[2J'), % Clear Screen
     bw("Generation: ", G),
     bw("F: ", Fitness),fail.
 
@@ -134,8 +133,10 @@ calculateStagnation(Population, Margin):-
     length(PreviousGensFitness, CurrLength),
     previous_generations_length(PrevGensMaxLength),
 
+    
+
     (   CurrLength < PrevGensMaxLength ->  
-        Margin = 9999999
+        Margin = 999999999
     ;   
         standard_deviation(PreviousGensFitness, Std),
         Margin = Std

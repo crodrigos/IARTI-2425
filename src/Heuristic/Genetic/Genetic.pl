@@ -1,4 +1,4 @@
-:- module(genetic, [genetic/9]).
+:- module(genetic, [genetic/9, genetic/11]).
 
 
 :- use_module([
@@ -36,7 +36,7 @@ previous_generations_queue(L):- map:map("gen_previous_gen_queue", L).
 :-previous_generations_queue([]).
 
 previous_generations_length(Length):- map:map("gen_previous_gen_length", Length).
-:-previous_generations_length(100).
+:-previous_generations_length(0).
 
 add_previous_generations(Val):-
     previous_generations_length(Length),
@@ -51,7 +51,25 @@ add_previous_generations(Val):-
 
 
 stagnation_margin(Val):-map:map("gen_stagnation_margin",Val).
-:-stagnation_margin(1).
+:-stagnation_margin(999999999).
+
+genetic(
+    InitialPopulation,
+    MaxGenerations, PopulationSize,
+    CrossoverPredicate, MutationPredicate, EvalutationPredicate,
+    CrossoverProbability, MutationProbability, 
+    StagnationMinumum, PreviousGensLength,
+    FinalPopulation
+) :-
+    previous_generations_length(PreviousGensLength),
+    stagnation_margin(StagnationMinumum),
+    genetic(
+        InitialPopulation,
+        MaxGenerations, PopulationSize,
+        CrossoverPredicate, MutationPredicate, EvalutationPredicate,
+        CrossoverProbability, MutationProbability, 
+        FinalPopulation
+    ).
 
 
 genetic(
@@ -133,9 +151,7 @@ calculateStagnation(Population, Margin):-
     length(PreviousGensFitness, CurrLength),
     previous_generations_length(PrevGensMaxLength),
 
-    
-
-    (   CurrLength < PrevGensMaxLength ->  
+    ((PrevGensMaxLength=0;CurrLength < PrevGensMaxLength) ->  
         Margin = 999999999
     ;   
         standard_deviation(PreviousGensFitness, Std),

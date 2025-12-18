@@ -10,12 +10,30 @@
     '../../../Heuristic/Genetic/Genetic.pl'
 ]).
 
+genetic(
+    VesselList, DockList,
+    MaxGenerations, PopulationSize, 
+    CrossProb, MutProb,
+    StagnationMinumum, StagnationAnalysisLength,
+    Best, Delay
+):-
+    generatePopulation(VesselList, DockList, PopulationSize, Population),
+    genetic:genetic(
+        Population,
+        MaxGenerations, PopulationSize,
+        geneticPort:crossover, geneticPort:mutate,
+        geneticPort:evaluate,
+        CrossProb, MutProb,
+        StagnationMinumum, StagnationAnalysisLength,
+        FinalPopulation   
+    ),
+    [(Delay,Best)|_] = FinalPopulation.
 
 
 genetic(
     VesselList, DockList,
     MaxGenerations, PopulationSize, 
-    CrossProb, MutProb, 
+    CrossProb, MutProb,
     Best, Delay
 ):-
     generatePopulation(VesselList, DockList, PopulationSize, Population),

@@ -118,7 +118,7 @@ genetic(
 
 % Predicado para imprimir
 genetic1([(Fitness,_)|_],_,G,_):- 
-    write('\n\33\[2J'), % Clear Screen
+    debug(genetic_gen, "", []),
     debug(genetic_gen, "Generation: ~d", [G]),
     debug(genetic_gen, "F: ~d", [Fitness]),
     fail.
@@ -137,7 +137,7 @@ genetic1(P,_,_,P):-
     stagnation_margin(StagnationMargin),
 
     calculateStagnation(P, Stag),
-    debug(genetic_gen, "Standard Deviation: ~d", [Stag]),
+    debug(genetic_gen, "Standard Deviation: ~f", [Stag]),
 
     Stag=<StagnationMargin,!,
     debug(genetic,"FINISHED: Fitness stagnated early~n", []).
@@ -196,11 +196,11 @@ reachedStagnation(P):-
     stagnation_margin(StagnationMargin),
 
     calculateStagnation(P, Stag),
-    debug(genetic_gen, "Standard Deviation: ~d~n", [Stag]),
+    debug(genetic_gen, "Standard Deviation: ~f", [Stag]),
 
     Stag=<StagnationMargin,
     previous_generations_length(PrevGensMaxLength),
-    format(atom(Msg), "Reached Stagnations Levels below ~d for ~d generations", [StagnationMargin, PrevGensMaxLength]),
+    format(atom(Msg), "Reached Stagnations Levels below ~f for ~d generations", [StagnationMargin, PrevGensMaxLength]),
     stop_message(Msg),
     debug(genetic, "~s~n", [Msg]).
 

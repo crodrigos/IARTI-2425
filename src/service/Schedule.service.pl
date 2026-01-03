@@ -25,7 +25,7 @@ heuristicmethod(HeuristicMethod):-map:map("schedule_service_heuristic_method", H
 
 method(Method):-map:map("schedule_service_method", Method).
 
-genetic(GeneticSettings):-map:map("schedule_service_genetic", GeneticSettings).
+genetic_settings(GeneticSettings):-map:map("schedule_servic_settingse_genetic", GeneticSettings).
 
 
 getSchedule(DataDict, Schedule, Delay, TimeTaken):-
@@ -36,9 +36,11 @@ getSchedule(DataDict, Schedule, Delay, TimeTaken):-
     useGenetic(Schedule, Delay),
     get_elapsed_time(TimeTaken).
 
+
+
     
 useGenetic(Schedule, Delay):-
-    genetic(Args),
+    genetic_settings(Args),
     allVessels(Vessels),
     docks_list(Docks),
 
@@ -108,6 +110,7 @@ readGeneticSettings(DataDict):-
     get_dict_or_var(mutationprobability, GenDict, MutProb),
     get_dict_or_var(stagnationminimum, GenDict, StagnMin),
     get_dict_or_var(stagnationanalysislength, GenDict, StagnLen),
-    Settings = [MaxGen, PopSize, CrossProb, MutProb, StagnMin, StagnLen],
-    genetic(Settings),
+    get_dict_or_var(maxtime, GenDict, MaxTime),
+    Settings = [MaxGen, PopSize, CrossProb, MutProb, StagnMin, StagnLen, MaxTime],
+    genetic_settings(Settings),
     debug(schedule, 'Asserted genetic settings: ~w', [Settings]).

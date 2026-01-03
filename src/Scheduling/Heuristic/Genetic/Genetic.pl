@@ -1,4 +1,4 @@
-:- module(genetic, [genetic/9, genetic/11]).
+:- module(genetic, [genetic/9, genetic/12]).
 
 
 :- use_module([
@@ -50,16 +50,31 @@ add_previous_generations(Val):-
 stagnation_margin(Val):-map:map("gen_stagnation_margin",Val).
 :-stagnation_margin(-1).
 
+
+max_time_allowed(MaxTime):- map:map("gen_max_time_allowed", MaxTime).
+:-max_time_allowed(9999999999).
+
+starting_time(StartTime) :- map:map("gen_start_time", StartTime).
+:-starting_time(0).
+
+
+
 genetic(
     InitialPopulation,
     MaxGenerations, PopulationSize,
     CrossoverPredicate, MutationPredicate, EvaluationPredicate,
     CrossoverProbability, MutationProbability, 
     StagnationMinumum, PreviousGensLength,
+    MaxTime,
     FinalPopulation
 ) :-
     previous_generations_length(PreviousGensLength),
     stagnation_margin(StagnationMinumum),
+    
+    max_time_allowed(MaxTime),
+    statistics(runtime, [CTime,_]),
+    starting_time(CTime),
+
     genetic(
         InitialPopulation,
         MaxGenerations, PopulationSize,
@@ -99,24 +114,25 @@ genetic(
 % Predicado para imprimir
 genetic1([(Fitness,_)|_],_,G,_):- 
     write('\n\33\[2J'), % Clear Screen
-    debug(genetic, "Generation: ~d", [G]),
-    debug(genetic, "F: ~d", [Fitness]),
+    debug(genetic_gen, "Generation: ~d", [G]),
+    debug(genetic_gen, "F: ~d", [Fitness]),
     fail.
 
-% Numero Max de Gerações atingidas
-genetic1(P,G,G,P):-!.
+genetic1(P,MG,G,P):-
+    (
+        reachedMaxGenerations(MG, G);
+        reachedPerfectFitness(P);
+        reachedStagnation(P);
+        reachedMaxTime
+    ),!.
 
-% Fitness Ideal Atingida + Guardar um melhor
-genetic1(P,_,_,P):-
-    [(Fitness,_)|_] = P,
-    Fitness=0, !.
 
 % Valores estagnaram
 genetic1(P,_,_,P):- 
     stagnation_margin(StagnationMargin),
 
     calculateStagnation(P, Stag),
-    debug(genetic, "Standard Deviation: ~d", [Stag]),
+    debug(genetic_gen, "Standard Deviation: ~d", [Stag]),
 
     Stag=<StagnationMargin,!,
     debug(genetic,"FINISHED: Fitness stagnated early~n", []).
@@ -136,6 +152,43 @@ generateInitialPopulation(InitialPop, InitialPopEval):-
     findall((Eval,El), 
         (member(El,InitialPop), evaluate(El, Eval)),
         InitialPopEval).
+
+
+
+
+reachedMaxTime:-
+    max_time_allowed(MaxTimeAllowed),
+    starting_time(StartTime),
+
+    statistics(runtime, [CurrTime|_]),
+    CalculationTime is CurrTime-StartTime,
+    debug(genetic_gen, "Elapsed Time: ~d (ms)", [CalculationTime]),
+
+    number(MaxTimeAllowed),
+    CalculationTime>MaxTimeAllowed,
+    
+    debug(genetic, "Reach Maximum Allowed Time~n", []).
+
+
+% Numero Max de Gerações atingidas
+reachedMaxGenerations(G,G):- debug(genetic, "Reached Max Number of Generations~n", []).
+
+% Fitness Ideal Atingida + Guardar um melhor
+reachedPerfectFitness(P):-
+    [(Fitness,_)|_] = P,
+    Fitness=0,
+    debug(genetic, "Reached Perfect Fitness (0)~n", []).
+
+% Valores estagnaram
+reachedStagnation(P):- 
+    stagnation_margin(StagnationMargin),
+
+    calculateStagnation(P, Stag),
+    debug(genetic_gen, "Standard Deviation: ~d~n", [Stag]),
+
+    Stag=<StagnationMargin,
+    debug(genetic, "Reached Stagnations Levels below ~d~n", [StagnationMargin]).
+
 
 
 

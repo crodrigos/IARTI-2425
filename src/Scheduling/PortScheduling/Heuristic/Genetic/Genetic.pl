@@ -50,14 +50,14 @@ genetic(
 
 
 
-
+generatePopulation(VesselList, DockList, PopulationSize, ScheduleList):-
+    var(PopulationSize),!,
+    generatePopulation(VesselList, DockList, 20, ScheduleList).
 generatePopulation(_, _, 0, []):-!.
 generatePopulation(VesselList, DockList, PopulationSize, [Schedule|RestSchedule]):-
     splitVesselListInDocksRand(VesselList, DockList, Schedule),
     PopSize1 is PopulationSize-1,
     generatePopulation(VesselList, DockList, PopSize1, RestSchedule).
-
-
 
 
 

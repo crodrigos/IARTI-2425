@@ -1,0 +1,209 @@
+meta {
+  name: Create Schedule
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{url}}/schedule
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "genetic": {
+      "maxgenerations": 1000
+    },
+    "docks": [2,3,4],
+    "vessels": [
+      {
+        "ref": "Zeus",
+        "arrivalTime": 6,
+        "departureTime": 63,
+        "unloadingTime": 10,
+        "loadingTime": 16
+      },
+      {
+        "ref": "Poseidon",
+        "arrivalTime": 23,
+        "departureTime": 50,
+        "unloadingTime": 9,
+        "loadingTime": 7
+      },
+      {
+        "ref": "Graca",
+        "arrivalTime": 8,
+        "departureTime": 40,
+        "unloadingTime": 5,
+        "loadingTime": 12
+      },
+      {
+        "ref": "Marques",
+        "arrivalTime": 10,
+        "departureTime": 30,
+        "unloadingTime": 0,
+        "loadingTime": 8
+      },
+      {
+        "ref": "Onda",
+        "arrivalTime": 36,
+        "departureTime": 70,
+        "unloadingTime": 12,
+        "loadingTime": 0
+      },
+      {
+        "ref": "Cartografo",
+        "arrivalTime": 15,
+        "departureTime": 55,
+        "unloadingTime": 8,
+        "loadingTime": 10
+      },
+      {
+        "ref": "Dona Maria",
+        "arrivalTime": 28,
+        "departureTime": 65,
+        "unloadingTime": 7,
+        "loadingTime": 9
+      },
+      {
+        "ref": "Cacador",
+        "arrivalTime": 45,
+        "departureTime": 80,
+        "unloadingTime": 6,
+        "loadingTime": 11
+      },
+      {
+        "ref": "marenostrum",
+        "arrivalTime": 8,
+        "departureTime": 50,
+        "unloadingTime": 8,
+        "loadingTime": 14
+      },
+      {
+        "ref": "nautilus",
+        "arrivalTime": 9,
+        "departureTime": 45,
+        "unloadingTime": 6,
+        "loadingTime": 12
+      },
+      {
+        "ref": "floating",
+        "arrivalTime": 12,
+        "departureTime": 60,
+        "unloadingTime": 9,
+        "loadingTime": 10
+      },
+      {
+        "ref": "atlantis",
+        "arrivalTime": 14,
+        "departureTime": 70,
+        "unloadingTime": 11,
+        "loadingTime": 11
+      },
+      {
+        "ref": "odyssey",
+        "arrivalTime": 15,
+        "departureTime": 75,
+        "unloadingTime": 8,
+        "loadingTime": 9
+      },
+      {
+        "ref": "triton",
+        "arrivalTime": 18,
+        "departureTime": 80,
+        "unloadingTime": 9,
+        "loadingTime": 13
+      },
+      {
+        "ref": "neptune",
+        "arrivalTime": 20,
+        "departureTime": 85,
+        "unloadingTime": 10,
+        "loadingTime": 10
+      },
+      {
+        "ref": "aquarius",
+        "arrivalTime": 22,
+        "departureTime": 90,
+        "unloadingTime": 7,
+        "loadingTime": 8
+      },
+      {
+        "ref": "aurora",
+        "arrivalTime": 25,
+        "departureTime": 88,
+        "unloadingTime": 6,
+        "loadingTime": 9
+      },
+      {
+        "ref": "chronos",
+        "arrivalTime": 26,
+        "departureTime": 95,
+        "unloadingTime": 10,
+        "loadingTime": 12
+      },
+      {
+        "ref": "argo",
+        "arrivalTime": 27,
+        "departureTime": 92,
+        "unloadingTime": 11,
+        "loadingTime": 10
+      },
+      {
+        "ref": "icarus",
+        "arrivalTime": 30,
+        "departureTime": 100,
+        "unloadingTime": 12,
+        "loadingTime": 12
+      },
+      {
+        "ref": "titan",
+        "arrivalTime": 32,
+        "departureTime": 102,
+        "unloadingTime": 13,
+        "loadingTime": 11
+      },
+      {
+        "ref": "leviathan",
+        "arrivalTime": 35,
+        "departureTime": 110,
+        "unloadingTime": 10,
+        "loadingTime": 10
+      },
+      {
+        "ref": "hydra",
+        "arrivalTime": 38,
+        "departureTime": 112,
+        "unloadingTime": 8,
+        "loadingTime": 14
+      },
+      {
+        "ref": "hermes",
+        "arrivalTime": 40,
+        "departureTime": 115,
+        "unloadingTime": 9,
+        "loadingTime": 13
+      },
+      {
+        "ref": "phoenix",
+        "arrivalTime": 42,
+        "departureTime": 118,
+        "unloadingTime": 10,
+        "loadingTime": 10
+      },
+      {
+        "ref": "selene",
+        "arrivalTime": 45,
+        "departureTime": 120,
+        "unloadingTime": 7,
+        "loadingTime": 9
+      }
+    ]
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

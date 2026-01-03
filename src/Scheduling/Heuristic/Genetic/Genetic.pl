@@ -11,7 +11,7 @@
 ]).
 
 population_size(N):-map:map("gen_popsize", N).
-:-population_size(10).
+:-population_size(30).
 
 max_generations(G):-map:map("gen_maxgens", G).
 :-max_generations(60).
@@ -19,18 +19,15 @@ max_generations(G):-map:map("gen_maxgens", G).
 mutation_probability(P):-map:map("gen_mutprob", P).
 :-mutation_probability(0.03).
 
-mutation_predicate(P):-map:map("gen_mutation_predicate", P).
-
 crossover_probability(P):-map:map("gen_crossprob", P).
 :-crossover_probability(0.7).
 
+mutation_predicate(P):-map:map("gen_mutation_predicate", P).
 crossover_predicate(P):-map:map("gen_crossover_predicate", P).
-
 evaluation_predicate(P):-map:map("gen_evalutation_predicate", P).
 
 last_generations(L):-map:map("gen_last_generations",L).
 :-last_generations([]).
-
 
 previous_generations_queue(L):- map:map("gen_previous_gen_queue", L).
 :-previous_generations_queue([]).
@@ -51,12 +48,12 @@ add_previous_generations(Val):-
 
 
 stagnation_margin(Val):-map:map("gen_stagnation_margin",Val).
-:-stagnation_margin(999999999).
+:-stagnation_margin(-1).
 
 genetic(
     InitialPopulation,
     MaxGenerations, PopulationSize,
-    CrossoverPredicate, MutationPredicate, EvalutationPredicate,
+    CrossoverPredicate, MutationPredicate, EvaluationPredicate,
     CrossoverProbability, MutationProbability, 
     StagnationMinumum, PreviousGensLength,
     FinalPopulation
@@ -66,7 +63,7 @@ genetic(
     genetic(
         InitialPopulation,
         MaxGenerations, PopulationSize,
-        CrossoverPredicate, MutationPredicate, EvalutationPredicate,
+        CrossoverPredicate, MutationPredicate, EvaluationPredicate,
         CrossoverProbability, MutationProbability, 
         FinalPopulation
     ).
@@ -75,7 +72,7 @@ genetic(
 genetic(
         InitialPopulation,
         MaxGenerations, PopulationSize,
-        CrossoverPredicate, MutationPredicate, EvalutationPredicate,
+        CrossoverPredicate, MutationPredicate, EvaluationPredicate,
         CrossoverProbability, MutationProbability, 
         FinalPopulation
     ):-
@@ -84,7 +81,7 @@ genetic(
 
         crossover_predicate(CrossoverPredicate),
         mutation_predicate(MutationPredicate),
-        evaluation_predicate(EvalutationPredicate),
+        evaluation_predicate(EvaluationPredicate),
 
         population_size(PopulationSize),
 
@@ -102,14 +99,15 @@ genetic(
 % Predicado para imprimir
 genetic1([(Fitness,_)|_],_,G,_):- 
     write('\n\33\[2J'), % Clear Screen
-    bw("Generation: ", G),
-    bw("F: ", Fitness),fail.
+    debug(genetic, "Generation: ~d", [G]),
+    debug(genetic, "F: ~d", [Fitness]),
+    fail.
 
 % Numero Max de Gerações atingidas
 genetic1(P,G,G,P):-!.
 
 % Fitness Ideal Atingida + Guardar um melhor
-genetic1(P,_,G,P):-
+genetic1(P,_,_,P):-
     [(Fitness,_)|_] = P,
     Fitness=0, !.
 
@@ -118,10 +116,10 @@ genetic1(P,_,_,P):-
     stagnation_margin(StagnationMargin),
 
     calculateStagnation(P, Stag),
-    bw("Standard Deviation: ", Stag),
+    debug(genetic, "Standard Deviation: ~d", [Stag]),
 
     Stag=<StagnationMargin,!,
-    bw(["FINISHED: Fitness stagnated early", "\n"]).
+    debug(genetic,"FINISHED: Fitness stagnated early~n", []).
 
 
 genetic1(Population, MaxGenerations, CurrentGeneration, Final):-

@@ -1,0 +1,11 @@
+{
+  "vessels": [
+    {
+      "ref":"poseidon",
+      "arrivalTime": 0,
+      "departureTime": 10,
+      "unloadingTime": 3,
+      "loadingTime": 4
+    }
+  ]
+}

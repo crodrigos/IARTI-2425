@@ -33,24 +33,12 @@ branchAndBound(NCranes, Vessels, Depth, SSeq, SDelay):-
     (branchAndBoundExplore1([(0,[Vessels])], Depth, 0);true),!,
 
     shortest_delay(SSeq, SDelay).
-    % longest_delay(LSeq, LDelay),
-    % medium_delay(_,_,MDelay),
-    % nPermutations(N),
-
-    % bw("   Shortest Delay: ", SDelay),
-    % bw("    Longest Delay: ", LDelay),
-    % bw("     Medium Delay: ", MDelay),
-
-    % bw(" Permutation Made: ", N).
 
     
     
 branchAndBoundExplore1(_, MaxDepth, MaxDepth):-!.
 branchAndBoundExplore1([(_,Caminho)|Outros], MaxDepth, Depth):-
     [CurrVesselL|_] =  Caminho,
-    % bw("Depth: ", Depth),
-    % bw("Custo: ", Custo),
-    % bw("First: ", CurrVesselL),
     compareAll(CurrVesselL),!.
 
 branchAndBoundExplore1([(Custo,Caminho)|Outros], MaxDepth, Depth):-

@@ -4,7 +4,7 @@ actor user as "User"
 
 box "System"
 participant http as "HttpServerController"
-participant schService as "ScheduleService"
+participant schService as "CreateScheduleService"
 participant Optimal
 participant Heuristic
 participant Genetic
@@ -14,7 +14,7 @@ end box
 user --> http : Send request for schedule with necessary data
 activate http
 
-http -> schService
+http -> schService : createSchedule
 activate schService
 
 alt number of docks <= 1

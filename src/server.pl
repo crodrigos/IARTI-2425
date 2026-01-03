@@ -15,7 +15,7 @@
 
 isDev:-
     format("Dev mode~n",[]),
-    debug([schedule,genetic]).
+    debug(_).
 
 list_all_routes :-
     format("Registred Routes",[]),

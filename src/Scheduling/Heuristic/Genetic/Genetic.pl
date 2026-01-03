@@ -1,4 +1,4 @@
-:- module(genetic, [genetic/9, genetic/12]).
+:- module(genetic, [genetic/9, genetic/13]).
 
 
 :- use_module([
@@ -58,6 +58,9 @@ starting_time(StartTime) :- map:map("gen_start_time", StartTime).
 :-starting_time(0).
 
 
+stop_message(Msg):- map:map("gen_stop_message", Msg).
+:-stop_message("").
+
 
 genetic(
     InitialPopulation,
@@ -66,7 +69,8 @@ genetic(
     CrossoverProbability, MutationProbability, 
     StagnationMinumum, PreviousGensLength,
     MaxTime,
-    FinalPopulation
+    FinalPopulation,
+    Reason
 ) :-
     previous_generations_length(PreviousGensLength),
     stagnation_margin(StagnationMinumum),
@@ -81,7 +85,8 @@ genetic(
         CrossoverPredicate, MutationPredicate, EvaluationPredicate,
         CrossoverProbability, MutationProbability, 
         FinalPopulation
-    ).
+    ),
+    stop_message(Reason).
 
 
 genetic(
@@ -167,17 +172,24 @@ reachedMaxTime:-
     number(MaxTimeAllowed),
     CalculationTime>MaxTimeAllowed,
     
-    debug(genetic, "Reach Maximum Allowed Time~n", []).
+    Msg = "Reach Maximum Allowed Time",
+    stop_message(Msg),
+    debug(genetic, "~s~n", [Msg]).
 
 
 % Numero Max de Gerações atingidas
-reachedMaxGenerations(G,G):- debug(genetic, "Reached Max Number of Generations~n", []).
+reachedMaxGenerations(G,G):- 
+    format(atom(Msg), "Reached Maximum Generations: ~d", [G]),
+    stop_message(Msg),
+    debug(genetic, "~s~n", [Msg]).
 
 % Fitness Ideal Atingida + Guardar um melhor
 reachedPerfectFitness(P):-
     [(Fitness,_)|_] = P,
     Fitness=0,
-    debug(genetic, "Reached Perfect Fitness (0)~n", []).
+    Msg = "Reached Perfect Fitness (0)",
+    stop_message(Msg),
+    debug(genetic, "~s~n", [Msg]).
 
 % Valores estagnaram
 reachedStagnation(P):- 
@@ -187,7 +199,10 @@ reachedStagnation(P):-
     debug(genetic_gen, "Standard Deviation: ~d~n", [Stag]),
 
     Stag=<StagnationMargin,
-    debug(genetic, "Reached Stagnations Levels below ~d~n", [StagnationMargin]).
+    previous_generations_length(PrevGensMaxLength),
+    format(atom(Msg), "Reached Stagnations Levels below ~d for ~d generations", [StagnationMargin, PrevGensMaxLength]),
+    stop_message(Msg),
+    debug(genetic, "~s~n", [Msg]).
 
 
 

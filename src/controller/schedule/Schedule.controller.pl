@@ -39,11 +39,9 @@
     schedule_route(post),
     [method(post)]  
 ).
-    
-schedule_route(post, Request):-
 
-    http_read_data(Request, DataRaw, [to(atom)]),
-    debug(schedule, 'Request: ~w', [DataRaw]),
+schedule_route(post, Request):-
+    http_read_json_dict(Request, DataRaw, [to(atom)]),
 
     atom_json_dict(DataRaw, Data, [value_string_as(string)]),
     debug(schedule, 'Recieved Data: ~w', [Data]),
@@ -51,44 +49,55 @@ schedule_route(post, Request):-
     parseResponseData(Data, DataForService),
 
     with_output_to(string(_), 
-        createScheduleService:getSchedule(DataForService, Schedule, Delay, TimeTaken)
+        createScheduleService:getSchedule(DataForService, Method, Reason, Schedule, Delay, TimeTaken)
     ),  
     debug(schedule, 'Returned Schedule: ~w', [Schedule]),
     
-    scheduleToJson(Schedule, Delay, TimeTaken, ScheduleJsonDict),
-    debug(schedule, 'Schedule JSON DICT: ~w', [ScheduleJsonDict]),
-    
-    prolog_to_json(ScheduleJsonDict, ReplyData),
-    debug(schedule, 'Schedule JSON RAW: ~w', [ReplyData]),
-    
-    format('Content-type: text/json~n~n', []),
-    format('~w', [ReplyData]).
-
+    scheduleToJson(Method, Reason, Schedule, Delay, TimeTaken, ScheduleJsonDict),
+    buildResponseMessage(status(success), ScheduleJsonDict, StandardResponse),
+    reply_json_dict(StandardResponse).
 
 
 schedule_route(post,_Request):-
     debug(schedule, 'error ocurred', []),
-    reply_json_dict(
-        _{
-            error: "An error has ocurred"  
-        }
-        ,[json_prolog_object(true)]
+    buildResponseMessage(status(error), "500 Internal Server Error", ErrorResponse),
+    http_status_reply(
+        server_error("Parsing Error"), ErrorResponse, _, _
     ).
 
 
 scheduleToJson(
-    Schedule, 
+    Method, 
+    Reason,
+    TimedSchedule, 
     Delay, 
     TimeTaken, 
-    dict{delay: Delay, schedule: ScheduleJson, timetaken: TimeTaken}
+    Dict
 ):-
     findall(
-        dict{cranes: Cranes, vessels: VesselsInDock}, 
+        DockJson, 
         (
-            member((Cranes, VesselsInDock), Schedule)
+            member(Dock, TimedSchedule),
+            findall(
+                json{ref: Ref, arrival: Arr, departure: Dep},
+                member((Ref, Arr, Dep), Dock),
+                DockJson
+            )
         ),
         ScheduleJson
-    ).
+    ),
+
+    Dict = dict{
+        delay: Delay, 
+        timetaken: TimeTaken,
+        method: Method,
+        reason: Reason,
+        schedule: ScheduleJson
+    }.
+
+%! buildResponseMessage(+Status, +Data, -ResponseMessage) is det
+buildResponseMessage(status(success), Data, json{status: "success", data: Data}).
+buildResponseMessage(status(error), ErrorMessage, json{status: "error", message: ErrorMessage}).
 
 % prolog_to_json(+Term, -JSONString)
 % Converts a Prolog Dict or json([Name=Value]) list into a JSON string.

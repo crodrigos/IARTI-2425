@@ -1,0 +1,89 @@
+meta {
+  name: Create Schedule (Optimal)
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{url}}/schedule
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "genetic": {
+      "maxgenerations": 1000,
+      "populationsize": 100,
+      "crossoverprobability": 0.7,
+      "mutationprobability": 0.1,
+      "stagnationminimum": -1,
+      "stagnationanalysislength": 1000,
+      "maxtime": 10000
+    },
+    "docks": [2,3],
+    "vessels": [
+      {
+        "ref": "Zeus",
+        "arrivalTime": 6,
+        "departureTime": 63,
+        "unloadingTime": 10,
+        "loadingTime": 16
+      },
+      {
+        "ref": "Poseidon",
+        "arrivalTime": 23,
+        "departureTime": 50,
+        "unloadingTime": 9,
+        "loadingTime": 7
+      },
+      {
+        "ref": "Graca",
+        "arrivalTime": 8,
+        "departureTime": 40,
+        "unloadingTime": 5,
+        "loadingTime": 12
+      },
+      {
+        "ref": "Marques",
+        "arrivalTime": 10,
+        "departureTime": 30,
+        "unloadingTime": 0,
+        "loadingTime": 8
+      },
+      {
+        "ref": "Onda",
+        "arrivalTime": 36,
+        "departureTime": 70,
+        "unloadingTime": 12,
+        "loadingTime": 0
+      },
+      {
+        "ref": "Cartografo",
+        "arrivalTime": 15,
+        "departureTime": 55,
+        "unloadingTime": 8,
+        "loadingTime": 10
+      },
+      {
+        "ref": "floating",
+        "arrivalTime": 12,
+        "departureTime": 60,
+        "unloadingTime": 9,
+        "loadingTime": 10
+      },
+      {
+        "ref": "atlantis",
+        "arrivalTime": 14,
+        "departureTime": 70,
+        "unloadingTime": 11,
+        "loadingTime": 11
+      }
+    ]
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

@@ -1,5 +1,5 @@
 
-:- module(createScheduleService, [getSchedule/4]).
+:- module(createScheduleService, [getSchedule/6]).
 
 :- use_module([
     library(http/http_server),
@@ -15,7 +15,9 @@
     "../Scheduling/PortScheduling/Heuristic/Genetic/Genetic.pl",
     "../Scheduling/Utils/Map.object.pl",
     "../Scheduling/Utils/Timer.object.pl",
-    "../Scheduling/Utils/DictPlus.pl"
+    "../Scheduling/Utils/DictPlus.pl",
+    "../Scheduling/DockScheduling/LinearPermutations/LinearPermutations.pl",
+    "../Scheduling/PortScheduling/MultipleDocks.pl"
 ]).
 
 docks_list(DockList):-map:map("schedule_service_dock_list", DockList).
@@ -24,33 +26,79 @@ docks_list(DockList):-map:map("schedule_service_dock_list", DockList).
 heuristicmethod(HeuristicMethod):-map:map("schedule_service_heuristic_method", HeuristicMethod).
 
 method(Method):-map:map("schedule_service_method", Method).
+:-method(genetic).
 
 genetic_settings(GeneticSettings):-map:map("schedule_servic_settingse_genetic", GeneticSettings).
 
 
-getSchedule(DataDict, Schedule, Delay, TimeTaken):-
+getSchedule(DataDict, Method, Reason, Schedule, Delay, TimeTaken):-
     debug(schedule, '~n Schedule Service ~n', []),
     readInputData(DataDict),
 
+
+    chooseMethod,
+    method(Method),
+    debug(schedule, 'Using method: ~w', [Method]),
+
     reset_timer,start_timer,
-    useGenetic(Schedule, Delay),
-    get_elapsed_time(TimeTaken).
+    useMethod(Method, ScheduleTemp, Delay, Reason),
+    get_elapsed_time(TimeTaken),
+
+    makeReadableSchedule(ScheduleTemp, Schedule),
+
+    debug(schedule, 'Schedule: ~w', [Schedule]),
+    debug(schedule, 'Delay: ~d', [Delay]),
+    debug(schedule, 'Time Taken (ms): ~d', [TimeTaken]).
+
+makeReadableSchedule(Schedule, ReadableSchedule):-
+    scheduleTemporization(Schedule, ReadableSchedule).
+
+chooseMethod:-
+    docks_list(Docks),
+    length(Docks, NDocks),
+
+    allVessels(Vessels),
+    length(Vessels, NVessels),
+
+    chooseMethod1(NDocks, NVessels).
+
+%! chooseMethod1(-NDocks,-NVessels) is det
+chooseMethod1(1,NVessels):-
+    NVessels=<8,
+    method(optimal).
+
+chooseMethod1(1,NVessels):-
+    method(heuristic).
+
+chooseMethod1(_,_):-
+    method(genetic).
 
 
 
-    
-useGenetic(Schedule, Delay):-
+
+
+useMethod(genetic, Schedule, Delay, Reason):-
+    useGenetic(Schedule, Delay, Reason).
+useMethod(optimal, Schedule, Delay, Reason):-
+    useOptimal(Schedule, Delay, Reason).
+
+useGenetic(Schedule, Delay, Reason):-
     genetic_settings(Args),
     allVessels(Vessels),
     docks_list(Docks),
 
-    append(Args, [Schedule, Delay], ArgsWithOut1),
+    append(Args, [Schedule, Delay, Reason], ArgsWithOut1),
     append([Vessels, Docks], ArgsWithOut1, ArgsWithOut),
 
     % apply = call, mas usando lista como argumentos
-    apply(geneticPort:genetic, ArgsWithOut),
-    debug(schedule, 'Delay: ~d', [Delay]).
+    apply(geneticPort:genetic, ArgsWithOut).
 
+useOptimal(Schedule, Delay, Reason):-
+    allVessels(Vessels),
+    docks_list(Docks),
+    Docks = [Dock|_],
+    Reason = "Reach optimal solution",
+    linearPermutations:getSchedule(Vessels, Dock, Schedule, Delay).
 
     
 readInputData(DataDict):-
@@ -103,14 +151,21 @@ readHeuristicMethod(DataDict):-
     debug(schedule, 'Asserted heuristic method: ~w', [HeuristicMethod]).
 
 readGeneticSettings(DataDict):-
-    GenDict = DataDict.genetic,
-    get_dict_or_var(maxgenerations, GenDict, MaxGen),
-    get_dict_or_var(populationsize, GenDict, PopSize),
-    get_dict_or_var(crossoverprobability, GenDict, CrossProb),
-    get_dict_or_var(mutationprobability, GenDict, MutProb),
-    get_dict_or_var(stagnationminimum, GenDict, StagnMin),
-    get_dict_or_var(stagnationanalysislength, GenDict, StagnLen),
-    get_dict_or_var(maxtime, GenDict, MaxTime),
+
+    get_dict_or_var(genetic, DataDict, GenDict),
+    
+    ((\+ var(GenDict))->
+        get_dict_or_var(maxgenerations, GenDict, MaxGen),
+        get_dict_or_var(populationsize, GenDict, PopSize),
+        get_dict_or_var(crossoverprobability, GenDict, CrossProb),
+        get_dict_or_var(mutationprobability, GenDict, MutProb),
+        get_dict_or_var(stagnationminimum, GenDict, StagnMin),
+        get_dict_or_var(stagnationanalysislength, GenDict, StagnLen),
+        get_dict_or_var(maxtime, GenDict, MaxTime),!
+    ;true),  
+    % To avoid error if genetic key does not exist
+     % To avoid error if genetic key does not exist
+    
     Settings = [MaxGen, PopSize, CrossProb, MutProb, StagnMin, StagnLen, MaxTime],
     genetic_settings(Settings),
     debug(schedule, 'Asserted genetic settings: ~w', [Settings]).

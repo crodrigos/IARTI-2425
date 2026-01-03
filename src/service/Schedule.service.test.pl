@@ -200,4 +200,4 @@ test:-
             }
         ]
     },
-    getSchedule(JSONDict, ScheduleDict, Delay, TimeTaken).
+    getSchedule(JSONDict,_,_, ScheduleDict, Delay, TimeTaken).

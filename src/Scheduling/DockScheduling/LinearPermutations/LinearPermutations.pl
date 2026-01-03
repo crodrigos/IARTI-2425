@@ -7,7 +7,6 @@
     '../../Utils/Map.object',
     '../../Utils/ListUtils.pl',
     '../../Utils/BetterWrite.pl',
-    '../vessels.pl',
     '../CraneScheduling.pl',
     '../vars.pl',
     '../../vessels.pl'
@@ -18,6 +17,13 @@
 max_permutations(MaxPerms) :- map:map("linearPermutations_MaxPermutations", MaxPerms).
 :- max_permutations(10000).
 
+getSchedule(ListOfVessels, NCranesAvailable, Schedule, Delay):-
+    obtainShortestSequence(ListOfVessels, NCranesAvailable, Sequence, Delay),
+    findall(Ref,
+        member((Ref,_,_), Sequence),
+        OrdListVessels
+    ),
+    Schedule = [(NCranesAvailable, OrdListVessels)].
 
 obtainShortestSequence(ListOfVessels, NCranesAvailable, Sequence, Delay):-
     shortest_delay([], 9999999),

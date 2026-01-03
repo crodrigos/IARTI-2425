@@ -16,7 +16,8 @@ genetic(
     CrossProb, MutProb,
     StagnationMinumum, StagnationAnalysisLength,
     MaxTime,
-    Best, Delay
+    Best, Delay,
+    Reason
 ):-
     generatePopulation(VesselList, DockList, PopulationSize, Population),
     genetic:genetic(
@@ -27,7 +28,8 @@ genetic(
         CrossProb, MutProb,
         StagnationMinumum, StagnationAnalysisLength,
         MaxTime,
-        FinalPopulation   
+        FinalPopulation,
+        Reason
     ),
     [(Delay,Best)|_] = FinalPopulation.
 

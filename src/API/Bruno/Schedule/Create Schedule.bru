@@ -13,10 +13,15 @@ post {
 body:json {
   {
     "genetic": {
-      "populationsize": 100,
       "maxgenerations": 1000,
+      "populationsize": 100,
+      "crossoverprobability":0.7,
+      "mutationprobability": 0.1,
+      "stagnationminimum": -1,
+      "stagnationanalysislength": 1000,
       "maxtime": 10000
     },
+    "heuristic": "sot",
     "docks": [2,3,4,1,2],
     "vessels": [
       {

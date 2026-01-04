@@ -107,7 +107,7 @@ genetic(
 
         generateInitialPopulation(InitialPopulation, InitialPopulationEval),
 
-        genetic1(InitialPopulationEval, MaxGenerations, 0,  FinalPopulation).
+        genetic1(InitialPopulationEval, MaxGenerations, 0,  FinalPopulation),bw("\n").
 
 
 % genetic1(Population,_,_,Final):-
@@ -157,9 +157,6 @@ generateInitialPopulation(InitialPop, InitialPopEval):-
     findall((Eval,El), 
         (member(El,InitialPop), evaluate(El, Eval)),
         InitialPopEval).
-
-
-
 
 reachedMaxTime:-
     max_time_allowed(MaxTimeAllowed),

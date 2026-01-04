@@ -1,4 +1,4 @@
-:- module(genetic, [genetic/9, genetic/13]).
+:- module(genetic, [genetic/13]).
 
 
 :- use_module([
@@ -79,35 +79,19 @@ genetic(
     statistics(runtime, [CTime,_]),
     starting_time(CTime),
 
-    genetic(
-        InitialPopulation,
-        MaxGenerations, PopulationSize,
-        CrossoverPredicate, MutationPredicate, EvaluationPredicate,
-        CrossoverProbability, MutationProbability, 
-        FinalPopulation
-    ),
+    crossover_probability(CrossoverProbability),
+    mutation_probability(MutationProbability),
+
+    crossover_predicate(CrossoverPredicate),
+    mutation_predicate(MutationPredicate),
+    evaluation_predicate(EvaluationPredicate),
+
+    population_size(PopulationSize),
+
+    generateInitialPopulation(InitialPopulation, InitialPopulationEval),
+
+    genetic1(InitialPopulationEval, MaxGenerations, 0,  FinalPopulation),
     stop_message(Reason).
-
-
-genetic(
-        InitialPopulation,
-        MaxGenerations, PopulationSize,
-        CrossoverPredicate, MutationPredicate, EvaluationPredicate,
-        CrossoverProbability, MutationProbability, 
-        FinalPopulation
-    ):-
-        crossover_probability(CrossoverProbability),
-        mutation_probability(MutationProbability),
-
-        crossover_predicate(CrossoverPredicate),
-        mutation_predicate(MutationPredicate),
-        evaluation_predicate(EvaluationPredicate),
-
-        population_size(PopulationSize),
-
-        generateInitialPopulation(InitialPopulation, InitialPopulationEval),
-
-        genetic1(InitialPopulationEval, MaxGenerations, 0,  FinalPopulation),bw("\n").
 
 
 % genetic1(Population,_,_,Final):-

@@ -5,9 +5,9 @@
 start
 
 if (Number of docks?) then (equals 1)
-    if (Number of vessels) then (lower then 6)
+    if (Number of vessels) then (lower then 8)
         :Optimal method;
-    else (greather or equal to 6)
+    else (greather or equal to 8)
         :Heuristic method;
     endif
 else (greater than 1)

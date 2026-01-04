@@ -17,23 +17,6 @@
     "../../Scheduling/Utils/DictPlus.pl" 
 ]).
 
-% /schedule route
-
-% :- http_handler(
-%     root(schedule), 
-%     schedule_route(get),
-%     [method(get)]
-% ).
-
-% schedule_route(get, _Request):-
-%     reply_html_page(
-%         title('Scheduler'),
-%         [ 
-%             h1('Hello world!'),
-%             p("Shcedule")
-%         ]
-%     ).
-
 :- http_handler(
     root(schedule), 
     schedule_route(post),

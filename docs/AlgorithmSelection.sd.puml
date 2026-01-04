@@ -1,4 +1,4 @@
-@startuml AlgorithmSelection_SD
+@startuml AlgorithmSelection.sd
 
 actor user as "User"
 
@@ -19,14 +19,14 @@ activate schService
 
 alt number of docks <= 1
 
-    alt number of vessels <= 6
+    alt number of vessels <= 8
 
         schService -> Optimal
         activate Optimal
         Optimal -> schService : Return Schedule
         deactivate Optimal
 
-    else number of vessels > 6
+    else number of vessels > 8
 
         schService -> Heuristic
         activate Heuristic

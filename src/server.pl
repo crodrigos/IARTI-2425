@@ -13,7 +13,8 @@
 ]).
 
 
-isDev:-
+
+devmode:-
     format("Dev mode~n",[]),
     debug(_).
 
@@ -23,5 +24,5 @@ list_all_routes :-
         format('~w handles ~w', [Path, Closure])
     ).
 
-:- isDev, list_all_routes, initialization(http_server([port(8080)])).
+:- list_all_routes, initialization(http_server([port(8080)])).
 

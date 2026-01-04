@@ -94,13 +94,6 @@ genetic(
     stop_message(Reason).
 
 
-% genetic1(Population,_,_,Final):-
-%     [Best|_] = Population,
-%     nCranes(NCranes),
-%     vesselSequenceDelay(Best, NCranes, _, Delay),
-%     Delay==0,!,Population=Final.
-
-% Predicado para imprimir
 genetic1([(Fitness,_)|_],_,G,_):- 
     debug(genetic_gen, "", []),
     debug(genetic_gen, "Generation: ~d", [G]),
@@ -115,18 +108,6 @@ genetic1(P,MG,G,P):-
         reachedMaxTime
     ),!.
 
-
-% Valores estagnaram
-genetic1(P,_,_,P):- 
-    stagnation_margin(StagnationMargin),
-
-    calculateStagnation(P, Stag),
-    debug(genetic_gen, "Standard Deviation: ~f", [Stag]),
-
-    Stag=<StagnationMargin,!,
-    debug(genetic,"FINISHED: Fitness stagnated early~n", []).
-
-
 genetic1(Population, MaxGenerations, CurrentGeneration, Final):-
     
     genNewPopulation(Population, NewPopulation),
@@ -137,11 +118,13 @@ genetic1(Population, MaxGenerations, CurrentGeneration, Final):-
     C1 is CurrentGeneration+1,
     genetic1(NewGen, MaxGenerations, C1, Final).
 
+
 generateInitialPopulation(InitialPop, InitialPopEval):-
     findall((Eval,El), 
         (member(El,InitialPop), evaluate(El, Eval)),
         InitialPopEval).
 
+% Tempo Maximo
 reachedMaxTime:-
     max_time_allowed(MaxTimeAllowed),
     starting_time(StartTime),

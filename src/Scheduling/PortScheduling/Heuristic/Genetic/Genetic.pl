@@ -34,25 +34,6 @@ genetic(
     [(Delay,Best)|_] = FinalPopulation.
 
 
-genetic(
-    VesselList, DockList,
-    MaxGenerations, PopulationSize, 
-    CrossProb, MutProb,
-    Best, Delay
-):-
-    generatePopulation(VesselList, DockList, PopulationSize, Population),
-    genetic:genetic(
-        Population,
-        MaxGenerations, PopulationSize,
-        geneticPort:crossover, geneticPort:mutate,
-        geneticPort:evaluate,
-        CrossProb, MutProb,
-        FinalPopulation   
-    ),
-    [(Delay,Best)|_] = FinalPopulation.
-
-
-
 
 generatePopulation(VesselList, DockList, PopulationSize, ScheduleList):-
     var(PopulationSize),!,

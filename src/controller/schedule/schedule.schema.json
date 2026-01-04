@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.com/schedule-schema.json",
+  "title": "Schedule Schema",
+  "description": "Schema for vessel scheduling using heuristics or genetic algorithms",
+  "type": "object",
+  "properties": {
+    "vessels": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "ref": { "type": "string" },
+          "arrivalTime": { "type": "number" },
+          "departureTime": { "type": "number" },
+          "unloadingTime": { "type": "number" },
+          "loadingTime": { "type": "number" }
+        },
+        "required": ["ref", "arrivalTime", "departureTime", "unloadingTime", "loadingTime"],
+        "additionalProperties": false
+      },
+      "minItems": 1
+    },
+    "heuristic": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["EAT", "EDT", "SOT"]
+        }
+      },
+      "required": ["type"],
+      "additionalProperties": false
+    },
+    "genetic": {
+      "type": "object",
+      "properties": {
+        "populationSize": { "type": "integer", "minimum": 1 },
+        "maxGenerations": { "type": "integer", "minimum": 1 },
+        "crossoverProbabilty": { "type": "number", "minimum": 0, "maximum": 1 },
+        "mutationProbabilty": { "type": "number", "minimum": 0, "maximum": 1 },
+        "previousGenerationLength": { "type": "integer", "minimum": 0 },
+        "stagnation_margin": { "type": "number", "minimum": 0 }
+      },
+      "required": [
+        "populationSize",
+        "maxGenerations",
+        "crossoverProbabilty",
+        "mutationProbabilty",
+        "previousGenerationLength",
+        "stagnation_margin"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": ["vessels"],
+  "additionalProperties": false
+}

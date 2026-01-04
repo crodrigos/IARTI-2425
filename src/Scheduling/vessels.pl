@@ -11,7 +11,7 @@
 ]).
 
 :- use_module(["startingPoints.pl"]).
-:- use_module('src/startingPoints').
+:- use_module('startingPoints').
 :- use_module(library(lists)).
 :- use_module(library(random)).
 

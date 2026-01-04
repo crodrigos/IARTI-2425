@@ -5,7 +5,7 @@
     '../../../Utils/Map.object',
     '../../../Utils/ListUtils.pl',
     '../../../Utils/BetterWrite.pl',
-    '../../vessels.pl',
+    '../../../vessels.pl',
     '../../CraneScheduling.pl',
     '../../vars.pl',
     '../../../Heuristic/Genetic/Genetic.pl'
@@ -47,6 +47,7 @@ genetic(
         VesselList, NCranes, 
         MaxGenerations, PopulationSize, 
         CrossProb, MutProb, 
+        StagnationMinumum, PreviousGensLength,
         Best, Delay
     ):-
         nCranes(NCranes),
@@ -56,6 +57,7 @@ genetic(
             MaxGenerations, PopulationSize,
             geneticDock:orderCrossover, geneticDock:mutate, geneticDock:evaluate,
             CrossProb, MutProb,
+            StagnationMinumum, PreviousGensLength,
             FinalPopulation
         ),
         [(Delay,Best)|_] = FinalPopulation.

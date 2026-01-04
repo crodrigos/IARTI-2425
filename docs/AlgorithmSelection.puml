@@ -1,0 +1,19 @@
+@startuml
+
+!pragma useVerticalIf on
+
+start
+
+if (Number of docks?) then (equals 1)
+    if (Number of vessels) then (lower then 6)
+        :Optimal method;
+    else (greather or equal to 6)
+        :Heuristic method;
+    endif
+else (greater than 1)
+    :Genetic algorithm;
+endif
+
+end
+
+@enduml

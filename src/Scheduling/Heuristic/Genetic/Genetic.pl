@@ -1,4 +1,5 @@
-:- module(genetic, [genetic/9, genetic/12]).
+:- module(genetic, [genetic/9, genetic/13]).
+
 
 :- use_module([
     '../../Utils/Timer.object.pl',
@@ -10,7 +11,7 @@
 ]).
 
 population_size(N):-map:map("gen_popsize", N).
-:-population_size(10).
+:-population_size(30).
 
 max_generations(G):-map:map("gen_maxgens", G).
 :-max_generations(60).
@@ -18,18 +19,15 @@ max_generations(G):-map:map("gen_maxgens", G).
 mutation_probability(P):-map:map("gen_mutprob", P).
 :-mutation_probability(0.03).
 
-mutation_predicate(P):-map:map("gen_mutation_predicate", P).
-
 crossover_probability(P):-map:map("gen_crossprob", P).
 :-crossover_probability(0.7).
 
+mutation_predicate(P):-map:map("gen_mutation_predicate", P).
 crossover_predicate(P):-map:map("gen_crossover_predicate", P).
-
 evaluation_predicate(P):-map:map("gen_evalutation_predicate", P).
 
 last_generations(L):-map:map("gen_last_generations",L).
 :-last_generations([]).
-
 
 previous_generations_queue(L):- map:map("gen_previous_gen_queue", L).
 :-previous_generations_queue([]).
@@ -50,25 +48,29 @@ add_previous_generations(Val):-
 
 
 stagnation_margin(Val):-map:map("gen_stagnation_margin",Val).
-:-stagnation_margin(999999999).
+:-stagnation_margin(-1).
 
 
 max_time_allowed(MaxTime):- map:map("gen_max_time_allowed", MaxTime).
-:-max_time_allowed(none).
+:-max_time_allowed(9999999999).
 
 starting_time(StartTime) :- map:map("gen_start_time", StartTime).
 :-starting_time(0).
 
 
+stop_message(Msg):- map:map("gen_stop_message", Msg).
+:-stop_message("").
+
 
 genetic(
     InitialPopulation,
     MaxGenerations, PopulationSize,
-    CrossoverPredicate, MutationPredicate, EvalutationPredicate,
+    CrossoverPredicate, MutationPredicate, EvaluationPredicate,
     CrossoverProbability, MutationProbability, 
-    StagnationMinumum, PreviousGensLength, 
+    StagnationMinumum, PreviousGensLength,
     MaxTime,
-    FinalPopulation
+    FinalPopulation,
+    Reason
 ) :-
     previous_generations_length(PreviousGensLength),
     stagnation_margin(StagnationMinumum),
@@ -80,16 +82,17 @@ genetic(
     genetic(
         InitialPopulation,
         MaxGenerations, PopulationSize,
-        CrossoverPredicate, MutationPredicate, EvalutationPredicate,
+        CrossoverPredicate, MutationPredicate, EvaluationPredicate,
         CrossoverProbability, MutationProbability, 
         FinalPopulation
-    ).
+    ),
+    stop_message(Reason).
 
 
 genetic(
         InitialPopulation,
         MaxGenerations, PopulationSize,
-        CrossoverPredicate, MutationPredicate, EvalutationPredicate,
+        CrossoverPredicate, MutationPredicate, EvaluationPredicate,
         CrossoverProbability, MutationProbability, 
         FinalPopulation
     ):-
@@ -98,7 +101,7 @@ genetic(
 
         crossover_predicate(CrossoverPredicate),
         mutation_predicate(MutationPredicate),
-        evaluation_predicate(EvalutationPredicate),
+        evaluation_predicate(EvaluationPredicate),
 
         population_size(PopulationSize),
 
@@ -115,9 +118,10 @@ genetic(
 
 % Predicado para imprimir
 genetic1([(Fitness,_)|_],_,G,_):- 
-    write('\n\33\[2J'), % Clear Screen
-    bw("Generation: ", G),
-    bw("Best Fitness: ", Fitness),fail.
+    debug(genetic_gen, "", []),
+    debug(genetic_gen, "Generation: ~d", [G]),
+    debug(genetic_gen, "F: ~d", [Fitness]),
+    fail.
 
 genetic1(P,MG,G,P):-
     (
@@ -126,6 +130,17 @@ genetic1(P,MG,G,P):-
         reachedStagnation(P);
         reachedMaxTime
     ),!.
+
+
+% Valores estagnaram
+genetic1(P,_,_,P):- 
+    stagnation_margin(StagnationMargin),
+
+    calculateStagnation(P, Stag),
+    debug(genetic_gen, "Standard Deviation: ~f", [Stag]),
+
+    Stag=<StagnationMargin,!,
+    debug(genetic,"FINISHED: Fitness stagnated early~n", []).
 
 
 genetic1(Population, MaxGenerations, CurrentGeneration, Final):-
@@ -143,40 +158,51 @@ generateInitialPopulation(InitialPop, InitialPopEval):-
         (member(El,InitialPop), evaluate(El, Eval)),
         InitialPopEval).
 
-
-% Passar do tempo maximo permitido
 reachedMaxTime:-
     max_time_allowed(MaxTimeAllowed),
     starting_time(StartTime),
 
     statistics(runtime, [CurrTime|_]),
     CalculationTime is CurrTime-StartTime,
-    bw(["Elapsed Time: ", CalculationTime," (ms)\n"]),
+    debug(genetic_gen, "Elapsed Time: ~d (ms)", [CalculationTime]),
 
     number(MaxTimeAllowed),
     CalculationTime>MaxTimeAllowed,
     
-    bw("Reach Maximum Allowed Time").
+    Msg = "Reach Maximum Allowed Time",
+    stop_message(Msg),
+    debug(genetic, "~s~n", [Msg]).
 
 
 % Numero Max de Gerações atingidas
-reachedMaxGenerations(G,G):- bw("Reached Max Number of Generations").
+reachedMaxGenerations(G,G):- 
+    format(atom(Msg), "Reached Maximum Generations: ~d", [G]),
+    stop_message(Msg),
+    debug(genetic, "~s~n", [Msg]).
 
 % Fitness Ideal Atingida + Guardar um melhor
 reachedPerfectFitness(P):-
     [(Fitness,_)|_] = P,
     Fitness=0,
-    bw(["Reached Perfect Fitness (0)"]).
+    Msg = "Reached Perfect Fitness (0)",
+    stop_message(Msg),
+    debug(genetic, "~s~n", [Msg]).
 
 % Valores estagnaram
 reachedStagnation(P):- 
     stagnation_margin(StagnationMargin),
 
     calculateStagnation(P, Stag),
-    bw("Standard Deviation: ", Stag),
+    debug(genetic_gen, "Standard Deviation: ~f", [Stag]),
 
     Stag=<StagnationMargin,
-    bw(["Reached Stagnations Levels below ", StagnationMargin, "\n"]).
+    previous_generations_length(PrevGensMaxLength),
+    format(atom(Msg), "Reached Stagnations Levels below ~f for ~d generations", [StagnationMargin, PrevGensMaxLength]),
+    stop_message(Msg),
+    debug(genetic, "~s~n", [Msg]).
+
+
+
 
 
 calculateStagnation(Population, Margin):-

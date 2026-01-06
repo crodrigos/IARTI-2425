@@ -109,12 +109,9 @@ genetic1(P,MG,G,P):-
     ),!.
 
 genetic1(Population, MaxGenerations, CurrentGeneration, Final):-
-    
     genNewPopulation(Population, NewPopulation),
     mutatePopulation(NewPopulation,MutatedPop),
-
     evalutateAndTrimPopulation(MutatedPop, NewGen),    
-
     C1 is CurrentGeneration+1,
     genetic1(NewGen, MaxGenerations, C1, Final).
 

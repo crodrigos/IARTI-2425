@@ -7,7 +7,8 @@
     allVessels/1,
     allVessels/2,
     allVesselsRandom/2,
-    situation/3
+    situation/3,
+    allVesselsHeuristic/2
 ]).
 
 :- use_module(["startingPoints.pl"]).
@@ -33,6 +34,19 @@ allVesselsRandom(N, Vessels):-
     allVessels(VL),
     random_permutation(VL, Perm),
     findall(E, (nth1(I,Perm,E), I =< N), Vessels).
+
+
+allVesselsHeuristic(eat, Vessels):-
+    allVessels(VL),
+    earliestArrivalTime(VL, Vessels).
+
+allVesselsHeuristic(edt, Vessels):-
+    allVessels(VL),
+    earliestDepartureTime(VL, Vessels).
+
+allVesselsHeuristic(sot, Vessels):-
+    allVessels(VL),
+    shortestOperationTime(VL, Vessels).
 
 
 situation(s1,

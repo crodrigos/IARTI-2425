@@ -1,7 +1,7 @@
 meta {
-  name: Create Schedule (Optimal)
+  name: Create Schedule (Heuristic)
   type: http
-  seq: 3
+  seq: 5
 }
 
 post {
@@ -36,6 +36,20 @@ body:json {
         "departureTime": 50,
         "unloadingTime": 9,
         "loadingTime": 7
+      },
+      {
+        "ref": "Graca",
+        "arrivalTime": 8,
+        "departureTime": 40,
+        "unloadingTime": 5,
+        "loadingTime": 12
+      },
+      {
+        "ref": "Marques",
+        "arrivalTime": 10,
+        "departureTime": 30,
+        "unloadingTime": 0,
+        "loadingTime": 8
       },
       {
         "ref": "Onda",

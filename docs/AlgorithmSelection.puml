@@ -4,14 +4,17 @@
 
 start
 
-if (Number of docks?) then (equals 1)
-    if (Number of vessels) then (lower then 8)
-        :Optimal method;
-    else (greather or equal to 8)
-        :Heuristic method;
-    endif
-else (greater than 1)
+if (Number of docks?) then (greater than 1)
     :Genetic algorithm;
+else
+    if (Number of vessels) then (greater or equal then 9)
+        :Genetic algorithm;
+    elseif (lower then 9)
+        :Heuristic method;
+    elseif (lower then 7)
+        :Optimal method;
+    else 
+    endif
 endif
 
 end

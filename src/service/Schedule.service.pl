@@ -24,6 +24,7 @@ docks_list(DockList):-map:map("schedule_service_dock_list", DockList).
 :-docks_list([1]).
 
 heuristicmethod(HeuristicMethod):-map:map("schedule_service_heuristic_method", HeuristicMethod).
+:-heuristicmethod(eat).
 
 method(Method):-map:map("schedule_service_method", Method).
 :-method(genetic).
@@ -38,7 +39,6 @@ getSchedule(DataDict, Method, Reason, Schedule, Delay, TimeTaken):-
 
     chooseMethod,
     method(Method),
-    debug(schedule, 'Using method: ~w', [Method]),
 
     reset_timer,start_timer,
     useMethod(Method, ScheduleTemp, Delay, Reason),
@@ -64,10 +64,11 @@ chooseMethod:-
 
 %! chooseMethod1(-NDocks,-NVessels) is det
 chooseMethod1(1,NVessels):-
-    NVessels=<8,
+    NVessels=<6,
     method(optimal).
 
 chooseMethod1(1,NVessels):-
+    NVessels=<8,
     method(heuristic).
 
 chooseMethod1(_,_):-
@@ -78,9 +79,16 @@ chooseMethod1(_,_):-
 
 
 useMethod(genetic, Schedule, Delay, Reason):-
+    debug(schedule, 'Using method: ~w', [genetic]),
     useGenetic(Schedule, Delay, Reason).
+
 useMethod(optimal, Schedule, Delay, Reason):-
+    debug(schedule, 'Using method: ~w', [optimal]),
     useOptimal(Schedule, Delay, Reason).
+
+useMethod(heuristic, Schedule, Delay, Reason):-    
+    debug(schedule, 'Using method: ~w', [heuristic]),
+    useHeuristic(Schedule, Delay, Reason).
 
 useGenetic(Schedule, Delay, Reason):-
     genetic_settings(Args),
@@ -94,10 +102,24 @@ useGenetic(Schedule, Delay, Reason):-
     apply(geneticPort:genetic, ArgsWithOut).
 
 useOptimal(Schedule, Delay, Reason):-
-    allVessels(Vessels),
     docks_list(Docks),
     Docks = [Dock|_],
+    
+    allVessels(Vessels),
+    
     Reason = "Reach optimal solution",
+    linearPermutations:getSchedule(Vessels, Dock, Schedule, Delay).
+
+useHeuristic(Schedule, Delay, Reason):-
+    docks_list(Docks),
+    Docks = [Dock|_],
+
+    heuristicmethod(HeuristicMethod),
+    allVesselsHeuristic(HeuristicMethod, Vessels),
+
+    format(atom(Msg), "Reach optimal solution, using heuristic method: ~w", [HeuristicMethod]),
+    
+    debug(schedule, 'Using heuristic method: ~w', [HeuristicMethod]),
     linearPermutations:getSchedule(Vessels, Dock, Schedule, Delay).
 
     
@@ -119,7 +141,7 @@ readInputData(DataDict):-
 
 readVessels(DataDict):-
     retractall(vessel(_,_,_,_,_)),
-    get_dict(vessels, DataDict, Vessels),
+    get_dict(vessels, DataDict, Vessels),   
     findall(VesselRef, (
         member(VesselDict, Vessels),
         VesselRef = VesselDict.ref,
@@ -145,7 +167,7 @@ readSpecifiedMethod(DataDict):-
     debug(schedule, 'Asserted method: ~w', [Method]).
 
 readHeuristicMethod(DataDict):-
-    heuristicmethod(_),
+    heuristicmethod(eat), % Default
     get_dict_or_var(heuristicmethod, DataDict, HeuristicMethod),
     heuristicmethod(HeuristicMethod),
     debug(schedule, 'Asserted heuristic method: ~w', [HeuristicMethod]).
